@@ -104,4 +104,10 @@ const updateCourse = asyncHandler(async (req, res) => {
   res.status(StatusCodes.OK).json(updatedCourse);
 });
 
-module.exports = { createCourse, getCourse, getCourseById, deleteCourse };
+module.exports = {
+  createCourse,
+  getCourse,
+  getCourseById,
+  deleteCourse,
+  updateCourse,
+};
