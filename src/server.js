@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const { StatusCodes } = require('http-status-codes');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const { courseRoutes } = require('./routes/courseRoutes');
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(
     credentials: true,
   })
 );
+app.use('/api', courseRoutes);
 
 app.use((req, res, next) => {
   const error = new Error('Not Found - ' + req.originalUrl);
