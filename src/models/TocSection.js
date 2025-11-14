@@ -1,8 +1,10 @@
 const { default: mongoose } = require('mongoose');
 
-const TocSectionSchemaema = new mongoose.Schema({
+const TocSectionSchema = new mongoose.Schema({
   title: { type: String, required: true },
   order: { type: Number, required: true },
+  sections: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Assignment' }],
 });
 
-export default mongoose.model('TocSection', TocSectionSchemaema);
+const TocSection = mongoose.model('TocSection', TocSectionSchema);
+module.exports = TocSection;

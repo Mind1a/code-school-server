@@ -6,4 +6,5 @@ const TocItemSchemaema = new mongoose.Schema({
   sections: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Section' }],
 });
 
-export default mongoose.model('TableOfContent', TocItemSchemaema);
+const TableOfContent = mongoose.model('TableOfContent', TocItemSchemaema);
+module.exports = TableOfContent;

@@ -1,8 +1,8 @@
 const asyncHandler = require('express-async-handler');
 const { StatusCodes } = require('http-status-codes');
-const TableOfContent = require('../models/TableOfContent');
+const TocSection = require('../models/TocSection');
 
-const createToc = asyncHandler(async (req, res) => {
+const createTocSection = asyncHandler(async (req, res) => {
   const { order, title } = req.body;
 
   if (!order || !title) {
@@ -11,45 +11,45 @@ const createToc = asyncHandler(async (req, res) => {
       .json({ message: 'order and title are required' });
   }
 
-  const existingToc = await TableOfContent.findOne({ title });
-  if (existingToc) {
+  const existingTocSection = await TocSection.findOne({ title });
+  if (existingTocSection) {
     return res
       .status(StatusCodes.CONFLICT)
-      .json({ message: 'tableOfContent already exists' });
+      .json({ message: 'TocSection already exists' });
   }
 
-  const toc = await TableOfContent.create({
+  const tocSection = await TocSection.create({
     order,
     title,
   });
-  await toc.save();
-  res.status(StatusCodes.CREATED).json(toc);
+  await tocSection.save();
+  res.status(StatusCodes.CREATED).json(tocSection);
 });
 
-const getToc = asyncHandler(async (_, res) => {
-  const allToc = await TableOfContent.find().populate('sections');
-  res.status(StatusCodes.OK).json(allToc);
+const getTocSection = asyncHandler(async (_, res) => {
+  const allTocSection = await TocSection.find().populate('sections');
+  res.status(StatusCodes.OK).json(allTocSection);
 });
 
-const getTocById = asyncHandler(async (req, res) => {
+const getTocSectionById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const toc = await TableOfContent.findById(id).populate('sections');
-  if (!toc) {
+  const tocSection = await TocSection.findById(id).populate('Assignment');
+  if (!tocSection) {
     return res
       .status(StatusCodes.NOT_FOUND)
-      .json({ message: 'TableOfContent not found' });
+      .json({ message: 'TocSection not found' });
   }
 
-  res.json(toc);
+  res.json(tocSection);
 });
 
-const deleteTocById = asyncHandler(async (req, res) => {
+const deleteTocSectionById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const toc = await TableOfContent.findByIdAndDelete(id);
+  const tocSection = await TocSection.findByIdAndDelete(id);
 
-  if (!toc) {
+  if (!tocSection) {
     return res
       .status(StatusCodes.NOT_FOUND)
       .json({ message: 'TableOfContent not found' });
@@ -58,7 +58,7 @@ const deleteTocById = asyncHandler(async (req, res) => {
   res.status(StatusCodes.OK).json({ message: 'table of content deleted' });
 });
 
-const updateToc = asyncHandler(async (req, res) => {
+const updateTocSection = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { order, title } = req.body;
 
@@ -78,25 +78,25 @@ const updateToc = asyncHandler(async (req, res) => {
   if (order !== undefined) update.order = order;
   if (title !== undefined) update.title = title;
 
-  const updatedToc = await TableOfContent.findByIdAndUpdate(
+  const updatedTocSection = await TocSection.findByIdAndUpdate(
     id,
     { $set: update },
     { new: true, runValidators: true }
   );
 
-  if (!updatedToc) {
+  if (!updatedTocSection) {
     return res
       .status(StatusCodes.NOT_FOUND)
       .json({ message: 'table of content not found' });
   }
 
-  res.status(StatusCodes.OK).json(updatedToc);
+  res.status(StatusCodes.OK).json(updatedTocSection);
 });
 
 module.exports = {
-  createToc,
-  getToc,
-  getTocById,
-  deleteTocById,
-  updateToc,
+  createTocSection,
+  getTocSection,
+  getTocSectionById,
+  deleteTocSectionById,
+  updateTocSection,
 };
