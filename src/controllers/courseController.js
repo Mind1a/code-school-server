@@ -11,7 +11,7 @@ const createCourse = asyncHandler(async (req, res) => {
   }
   const existedCourse = await Course.findOne({ name });
   if (existedCourse) {
-    res.status(StatusCodes.BAD_REQUEST);
+    res.status(StatusCodes.CONFLICT);
     throw new Error('sorry this course already exist');
   }
   let courseImage = '';
@@ -78,17 +78,17 @@ const updateCourse = asyncHandler(async (req, res) => {
   const { name, author, sectionCount, description, image } = req.body;
 
   if (!id) {
-    res.status(StatusCodes.BAD_REQUEST);
-    throw new Error('Course ID is required');
+    return res
+      .status(StatusCodes.BAD_REQUEST)
+      .json({ message: 'Course ID is required' });
   }
 
   const update = {};
-
-  if (name) update.name = name;
-  if (author) update.author = author;
-  if (sectionCount) update.sectionCount = sectionCount;
-  if (description) update.description = description;
-  if (image) update.image = image;
+  if (name !== undefined) update.name = name;
+  if (author !== undefined) update.author = author;
+  if (sectionCount !== undefined) update.sectionCount = sectionCount;
+  if (description !== undefined) update.description = description;
+  if (image !== undefined) update.image = image;
 
   const updatedCourse = await Course.findByIdAndUpdate(
     id,
