@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const { courseRoutes } = require('./routes/courseRoutes');
 const { tocRoutes } = require('./routes/tableOfContentRoutes');
+const { tocSectionRoutes } = require('./routes/tocSectionRoutes');
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(
   })
 );
 app.use('/api', courseRoutes);
+app.use('/api', tocSectionRoutes);
 app.use('/api', tocRoutes);
 
 app.use((req, res, next) => {

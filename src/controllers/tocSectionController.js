@@ -1,14 +1,22 @@
 const asyncHandler = require('express-async-handler');
 const { StatusCodes } = require('http-status-codes');
 const TocSection = require('../models/TocSection');
+const TableOfContent = require('../models/TableOfContent');
 
 const createTocSection = asyncHandler(async (req, res) => {
-  const { order, title } = req.body;
+  const { order, title, tocId } = req.body;
 
-  if (!order || !title) {
+  if (!order || !title || !tocId) {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ message: 'order and title are required' });
+      .json({ message: 'order, tocId and title are required' });
+  }
+
+  const toc = await TableOfContent.findById(tocId);
+  if (!toc) {
+    return res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ message: 'tableOfContent not found' });
   }
 
   const existingTocSection = await TocSection.findOne({ title });
@@ -21,13 +29,15 @@ const createTocSection = asyncHandler(async (req, res) => {
   const tocSection = await TocSection.create({
     order,
     title,
+    tocId,
   });
-  await tocSection.save();
+  toc.section.push(tocSection._id);
+  await toc.save();
   res.status(StatusCodes.CREATED).json(tocSection);
 });
 
 const getTocSection = asyncHandler(async (_, res) => {
-  const allTocSection = await TocSection.find().populate('sections');
+  const allTocSection = await TocSection.find().populate('Assignment');
   res.status(StatusCodes.OK).json(allTocSection);
 });
 
