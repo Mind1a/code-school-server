@@ -3,7 +3,15 @@ const { default: mongoose } = require('mongoose');
 const TocSectionSchema = new mongoose.Schema({
   title: { type: String, required: true },
   order: { type: Number, required: true },
-  section: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Assignment' }],
+  chapter: {
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Chapter',
+      },
+    ],
+    default: [],
+  },
   tocId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'TableOfContent',

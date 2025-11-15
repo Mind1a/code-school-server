@@ -1,25 +1,21 @@
-// models/Chapter.js
-import mongoose from 'mongoose';
+const { default: mongoose } = require('mongoose');
 
 const ChapterSchema = new mongoose.Schema(
   {
-    course: {
+    chapterNumber: { type: String, required: true },
+    chapterTitle: { type: String, required: true },
+    subTitle: { type: String, required: true },
+    description: { type: String, required: true },
+    imageUrl: { type: String },
+    task: { type: String, required: true },
+    sectionId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Course',
+      ref: 'TocSection',
       required: true,
     },
-    chapterNumber: { type: String, required: true }, // e.g. "2.2"
-    chapterTitle: { type: String, required: true }, // e.g. "HTML-ის საფუძვლები"
-    chapterIndex: { type: Number, required: true }, // e.g. 2
-    sections: [
-      {
-        subTitle: String,
-        description: String,
-        imageUrl: String,
-      },
-    ],
   },
   { timestamps: true }
 );
 
-export default mongoose.model('Chapter', ChapterSchema);
+const Chapter = mongoose.model('Chapter', ChapterSchema);
+module.exports = Chapter;

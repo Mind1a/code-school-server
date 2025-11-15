@@ -7,6 +7,7 @@ const cors = require('cors');
 const { courseRoutes } = require('./routes/courseRoutes');
 const { tocRoutes } = require('./routes/tableOfContentRoutes');
 const { tocSectionRoutes } = require('./routes/tocSectionRoutes');
+const { chapterRoutes } = require('./routes/chapterRoutes');
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use(
 app.use('/api', courseRoutes);
 app.use('/api', tocSectionRoutes);
 app.use('/api', tocRoutes);
+app.use('/api', chapterRoutes);
 
 app.use((req, res, next) => {
   const error = new Error('Not Found - ' + req.originalUrl);

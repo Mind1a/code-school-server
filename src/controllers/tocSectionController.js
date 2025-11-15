@@ -37,14 +37,14 @@ const createTocSection = asyncHandler(async (req, res) => {
 });
 
 const getTocSection = asyncHandler(async (_, res) => {
-  const allTocSection = await TocSection.find().populate('Assignment');
+  const allTocSection = await TocSection.find().populate('chapter');
   res.status(StatusCodes.OK).json(allTocSection);
 });
 
 const getTocSectionById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const tocSection = await TocSection.findById(id).populate('Assignment');
+  const tocSection = await TocSection.findById(id).populate('chapter');
   if (!tocSection) {
     return res
       .status(StatusCodes.NOT_FOUND)

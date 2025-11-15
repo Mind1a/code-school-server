@@ -41,6 +41,9 @@ const getCourse = asyncHandler(async (_, res) => {
     path: 'tableOfContent',
     populate: {
       path: 'section',
+      populate: {
+        path: 'chapter',
+      },
     },
   });
   res.status(StatusCodes.OK).json(courses);
@@ -53,6 +56,9 @@ const getCourseById = asyncHandler(async (req, res) => {
     path: 'tableOfContent',
     populate: {
       path: 'section',
+      populate: {
+        path: 'chapter',
+      },
     },
   });
   if (!course) {
