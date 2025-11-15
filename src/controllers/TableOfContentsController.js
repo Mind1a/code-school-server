@@ -1,28 +1,40 @@
 const asyncHandler = require('express-async-handler');
 const { StatusCodes } = require('http-status-codes');
 const TableOfContent = require('../models/TableOfContent');
+const Course = require('../models/Course');
 
 const createToc = asyncHandler(async (req, res) => {
-  const { order, title } = req.body;
+  const { order, title, courseId } = req.body;
 
-  if (!order || !title) {
+  if (!order || !title || !courseId) {
     return res
       .status(StatusCodes.BAD_REQUEST)
-      .json({ message: 'order and title are required' });
+      .json({ message: 'order, title and courseId are required' });
   }
 
-  const existingToc = await TableOfContent.findOne({ title });
+  const course = await Course.findById(courseId);
+  if (!course) {
+    return res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ message: 'Course not found' });
+  }
+
+  const existingToc = await TableOfContent.findOne({ title, courseId });
   if (existingToc) {
     return res
       .status(StatusCodes.CONFLICT)
-      .json({ message: 'tableOfContent already exists' });
+      .json({ message: 'TableOfContent already exists for this course' });
   }
 
   const toc = await TableOfContent.create({
     order,
     title,
+    courseId,
   });
-  await toc.save();
+
+  course.tableOfContent.push(toc._id);
+  await course.save();
+
   res.status(StatusCodes.CREATED).json(toc);
 });
 

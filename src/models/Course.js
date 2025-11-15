@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const { default: mongoose } = require('mongoose');
 
 const CourseSchema = new mongoose.Schema(
   {
@@ -6,9 +6,19 @@ const CourseSchema = new mongoose.Schema(
     author: { type: String, required: true },
     sectionCount: { type: Number, required: true },
     description: { type: String },
-    image: { type: String },
+    projectPicture: { type: String },
+    tableOfContent: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'TableOfContent',
+        },
+      ],
+      default: [],
+    },
   },
   { timestamps: true }
 );
 
-export default mongoose.model('Course', CourseSchema);
+const Course = mongoose.model('Course', CourseSchema);
+module.exports = Course;

@@ -11,13 +11,13 @@ const {
 const courseRoutes = express.Router();
 
 courseRoutes.get('/courses', getCourse);
-
-courseRoutes.post('/courses', upload.single('coursesPicture'), createCourse);
-
+courseRoutes.post('/courses', upload.single('courseImage'), createCourse);
 courseRoutes.get('/courses/:courseId', getCourseById);
-
-courseRoutes.patch('/courses/:courseId', updateCourse);
-
+courseRoutes.patch(
+  '/courses/:courseId',
+  upload.single('courseImage'),
+  updateCourse
+);
 courseRoutes.delete('/courses/:courseId', deleteCourse);
 
 module.exports = { courseRoutes };

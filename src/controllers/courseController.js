@@ -1,83 +1,79 @@
 const asyncHandler = require('express-async-handler');
 const { StatusCodes } = require('http-status-codes');
 const { uploadToCloudinary } = require('../lib/cloudinaryUpload');
-const { default: Course } = require('../models/Course');
+const Course = require('../models/Course');
 
 const createCourse = asyncHandler(async (req, res) => {
-  const { name, author, sectionCount, description, image } = req.body;
-  if (!name || !author || !sectionCount || !image) {
+  const { name, author, sectionCount, description } = req.body;
+
+  if (!name || !author || !sectionCount) {
     res.status(StatusCodes.BAD_REQUEST);
-    throw new Error('name, author, sectionCount, and courseImage are required');
+    throw new Error('name, author, and sectionCount are required');
   }
-  const existedCourse = await Course.findOne({ name });
-  if (existedCourse) {
-    res.status(StatusCodes.CONFLICT);
-    throw new Error('sorry this course already exist');
-  }
-  let courseImage = '';
+
   if (!req.file) {
     res.status(StatusCodes.BAD_REQUEST);
     throw new Error('Course picture is required');
   }
-  if (req.file) {
-    const result = await uploadToCloudinary(req.file.path, 'codeSchool/album');
-    courseImage = result.secure_url;
+
+  const existedCourse = await Course.findOne({ name });
+  if (existedCourse) {
+    res.status(StatusCodes.CONFLICT);
+    throw new Error('This course already exists');
   }
+
+  const result = await uploadToCloudinary(req.file.path, 'codeSchool/album');
+
   const course = await Course.create({
     name,
     author,
     sectionCount,
     description,
-    image: courseImage,
+    projectPicture: result.secure_url,
+    tableOfContent: [],
   });
-  await course.save();
+
   res.status(StatusCodes.CREATED).json(course);
 });
 
-const getCourse = asyncHandler(async (req, res) => {
-  const course = await Course.find();
-  res.status(StatusCodes.OK).json(course);
+const getCourse = asyncHandler(async (_, res) => {
+  const courses = await Course.find().populate('tableOfContent');
+  res.status(StatusCodes.OK).json(courses);
 });
 
 const getCourseById = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  if (!id) {
-    res.status(StatusCodes.BAD_REQUEST);
-    throw new Error('Course ID is required');
-  }
-  const course = await Course.findById(id);
+  const { courseId } = req.params;
+
+  const course = await Course.findById(courseId).populate('tableOfContent');
   if (!course) {
     res.status(StatusCodes.NOT_FOUND);
     throw new Error('Course not found');
   }
+
   res.status(StatusCodes.OK).json(course);
 });
 
 const deleteCourse = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-
-  if (!id) {
+  const { courseId } = req.params;
+  if (!courseId) {
     res.status(StatusCodes.BAD_REQUEST);
     throw new Error('Course ID is required');
   }
 
-  const course = await Course.findByIdAndDelete(id);
-
+  const course = await Course.findByIdAndDelete(courseId);
   if (!course) {
     res.status(StatusCodes.NOT_FOUND);
     throw new Error('Course not found');
   }
 
-  res.status(StatusCodes.OK).json({
-    message: 'course removed',
-  });
+  res.status(StatusCodes.OK).json({ message: 'Course removed' });
 });
 
 const updateCourse = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const { name, author, sectionCount, description, image } = req.body;
+  const { courseId } = req.params;
+  const { name, author, sectionCount, description } = req.body;
 
-  if (!id) {
+  if (!courseId) {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ message: 'Course ID is required' });
@@ -88,17 +84,20 @@ const updateCourse = asyncHandler(async (req, res) => {
   if (author !== undefined) update.author = author;
   if (sectionCount !== undefined) update.sectionCount = sectionCount;
   if (description !== undefined) update.description = description;
-  if (image !== undefined) update.image = image;
 
-  const updatedCourse = await Course.findByIdAndUpdate(
-    id,
-    { $set: update },
-    { new: true, runValidators: true }
-  );
+  if (req.file) {
+    const result = await uploadToCloudinary(req.file.path, 'codeSchool/album');
+    update.projectPicture = result.secure_url;
+  }
+
+  const updatedCourse = await Course.findByIdAndUpdate(courseId, update, {
+    new: true,
+    runValidators: true,
+  });
 
   if (!updatedCourse) {
     res.status(StatusCodes.NOT_FOUND);
-    throw new Error('Project not found');
+    throw new Error('Course not found');
   }
 
   res.status(StatusCodes.OK).json(updatedCourse);
