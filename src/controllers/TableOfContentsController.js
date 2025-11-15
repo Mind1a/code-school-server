@@ -39,14 +39,14 @@ const createToc = asyncHandler(async (req, res) => {
 });
 
 const getToc = asyncHandler(async (_, res) => {
-  const allToc = await TableOfContent.find().populate('sections');
+  const allToc = await TableOfContent.find().populate('section');
   res.status(StatusCodes.OK).json(allToc);
 });
 
 const getTocById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const toc = await TableOfContent.findById(id).populate('sections');
+  const toc = await TableOfContent.findById(id).populate('section');
   if (!toc) {
     return res
       .status(StatusCodes.NOT_FOUND)

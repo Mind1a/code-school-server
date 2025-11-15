@@ -11,8 +11,8 @@ const tocRoutes = express.Router();
 
 tocRoutes.get('/toc', getToc);
 tocRoutes.post('/toc', createToc);
-tocRoutes.get('/toc/:tocId', getTocById);
-tocRoutes.patch('/toc/:tocId', updateToc);
-tocRoutes.delete('/toc/:tocId', deleteTocById);
+tocRoutes.get('/toc/:id', getTocById);
+tocRoutes.patch('/toc/:id', updateToc);
+tocRoutes.delete('/toc/:id', deleteTocById);
 
 module.exports = { tocRoutes };

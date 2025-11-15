@@ -37,14 +37,24 @@ const createCourse = asyncHandler(async (req, res) => {
 });
 
 const getCourse = asyncHandler(async (_, res) => {
-  const courses = await Course.find().populate('tableOfContent');
+  const courses = await Course.find().populate({
+    path: 'tableOfContent',
+    populate: {
+      path: 'section',
+    },
+  });
   res.status(StatusCodes.OK).json(courses);
 });
 
 const getCourseById = asyncHandler(async (req, res) => {
   const { courseId } = req.params;
 
-  const course = await Course.findById(courseId).populate('tableOfContent');
+  const course = await Course.findById(courseId).populate({
+    path: 'tableOfContent',
+    populate: {
+      path: 'section',
+    },
+  });
   if (!course) {
     res.status(StatusCodes.NOT_FOUND);
     throw new Error('Course not found');
