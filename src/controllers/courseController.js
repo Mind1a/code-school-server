@@ -56,9 +56,7 @@ const getCourseById = asyncHandler(async (req, res) => {
     path: 'tableOfContent',
     populate: {
       path: 'section',
-      populate: {
-        path: 'chapter',
-      },
+      populate: [{ path: 'chapter' }, { path: 'homework' }],
     },
   });
   if (!course) {

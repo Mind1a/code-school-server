@@ -12,6 +12,15 @@ const TocSectionSchema = new mongoose.Schema({
     ],
     default: [],
   },
+  homework: {
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Homework',
+      },
+    ],
+    default: [],
+  },
   tocId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'TableOfContent',
