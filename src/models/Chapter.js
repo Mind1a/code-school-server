@@ -2,7 +2,7 @@ const { default: mongoose } = require('mongoose');
 
 const ChapterSchema = new mongoose.Schema(
   {
-    chapterNumber: { type: String, required: true },
+    chapterNumber: { type: Number, required: true },
     chapterTitle: { type: String, required: true },
     subTitle: { type: String, required: true },
     description: { type: String, required: true },
