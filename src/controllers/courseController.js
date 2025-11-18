@@ -41,9 +41,6 @@ const getCourse = asyncHandler(async (_, res) => {
     path: 'tableOfContent',
     populate: {
       path: 'section',
-      populate: {
-        path: 'chapter',
-      },
     },
   });
   res.status(StatusCodes.OK).json(courses);

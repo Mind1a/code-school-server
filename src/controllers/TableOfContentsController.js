@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const { StatusCodes } = require('http-status-codes');
 const TableOfContent = require('../models/TableOfContent');
 const Course = require('../models/Course');
+const TocSection = require('../models/TocSection');
 
 const createToc = asyncHandler(async (req, res) => {
   const { order, title, courseId } = req.body;
@@ -39,7 +40,24 @@ const createToc = asyncHandler(async (req, res) => {
 });
 
 const getToc = asyncHandler(async (_, res) => {
-  const allToc = await TableOfContent.find().populate('section');
+  const totalSections = await TocSection.countDocuments();
+
+  const allToc = await TableOfContent.aggregate([
+    {
+      $lookup: {
+        from: 'tocsections',
+        localField: 'section',
+        foreignField: '_id',
+        as: 'section',
+      },
+    },
+    {
+      $set: {
+        totalSections: totalSections,
+      },
+    },
+  ]);
+
   res.status(StatusCodes.OK).json(allToc);
 });
 

@@ -56,9 +56,27 @@ const createChapter = asyncHandler(async (req, res) => {
   res.status(StatusCodes.CREATED).json(chapter);
 });
 
-const getChapter = asyncHandler(async (_, res) => {
-  const allChapters = await Chapter.find();
-  res.status(StatusCodes.OK).json(allChapters);
+const getChapter = asyncHandler(async (req, res) => {
+  const { page = 1 } = req.query;
+
+  const count = await Chapter.countDocuments();
+  const skip = parseInt(page) - 1;
+
+  const chapters = await Chapter.find()
+    .sort({ order: 1 })
+    .skip(Math.max(0, skip - 1))
+    .limit(3);
+
+  const currentIndex = skip === 0 ? 0 : 1;
+
+  res.status(StatusCodes.OK).json({
+    chapter: chapters[currentIndex],
+    prevChapter: chapters[currentIndex - 1]?._id || null,
+    nextChapter: chapters[currentIndex + 1]?._id || null,
+    page: parseInt(page),
+    totalPages: count,
+    totalChapters: count,
+  });
 });
 
 const getChapterById = asyncHandler(async (req, res) => {
