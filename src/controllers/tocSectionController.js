@@ -2,6 +2,8 @@ const asyncHandler = require('express-async-handler');
 const { StatusCodes } = require('http-status-codes');
 const TocSection = require('../models/TocSection');
 const TableOfContent = require('../models/TableOfContent');
+const Chapter = require('../models/Chapter');
+const Homework = require('../models/Homeworks');
 
 const createTocSection = asyncHandler(async (req, res) => {
   const { order, title, tocId } = req.body;
@@ -57,14 +59,19 @@ const getTocSectionById = asyncHandler(async (req, res) => {
 const deleteTocSectionById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const tocSection = await TocSection.findByIdAndDelete(id);
-
+  const tocSection = await TocSection.findById(id);
   if (!tocSection) {
     return res
       .status(StatusCodes.NOT_FOUND)
       .json({ message: 'TableOfContent not found' });
   }
-
+  if (tocSection.chapter.length > 0) {
+    await Chapter.deleteMany({ _id: { $in: tocSection.chapter } });
+  }
+  if (tocSection.homework.length > 0) {
+    await Homework.deleteMany({ _id: { $in: tocSection.homework } });
+  }
+  await tocSection.deleteOne();
   res.status(StatusCodes.OK).json({ message: 'table of content deleted' });
 });
 

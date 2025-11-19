@@ -40,8 +40,10 @@ const createCourse = asyncHandler(async (req, res) => {
 const getCourse = asyncHandler(async (_, res) => {
   const courses = await Course.find().populate({
     path: 'tableOfContent',
+    select: 'order title section _id',
     populate: {
       path: 'section',
+      select: 'order title chapter homework',
     },
   });
   res.status(StatusCodes.OK).json(courses);
@@ -52,8 +54,10 @@ const getCourseById = asyncHandler(async (req, res) => {
 
   const course = await Course.findById(courseId).populate({
     path: 'tableOfContent',
+    select: 'order title section',
     populate: {
       path: 'section',
+      select: 'order title chapter homework',
       populate: [{ path: 'chapter' }, { path: 'homework' }],
     },
   });

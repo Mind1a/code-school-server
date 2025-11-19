@@ -12,6 +12,7 @@ const createChapter = asyncHandler(async (req, res) => {
     description,
     task,
     sectionId,
+    realLifeExample,
   } = req.body;
 
   if (
@@ -20,11 +21,12 @@ const createChapter = asyncHandler(async (req, res) => {
     !subTitle ||
     !description ||
     !task ||
-    !sectionId
+    !sectionId ||
+    !realLifeExample
   ) {
     res.status(StatusCodes.BAD_REQUEST);
     throw new Error(
-      'chapterNumber, chapterTitle, subTitle, description, task, sectionId are required'
+      'chapterNumber, chapterTitle, subTitle, description, task, realLifeExample, sectionId are required'
     );
   }
 
@@ -42,6 +44,7 @@ const createChapter = asyncHandler(async (req, res) => {
     task,
     sectionId,
     imageUrl,
+    realLifeExample,
   });
 
   const tocSection = await TocSection.findById(sectionId);
