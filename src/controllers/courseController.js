@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const { StatusCodes } = require('http-status-codes');
 const { uploadToCloudinary } = require('../lib/cloudinaryUpload');
 const Course = require('../models/Course');
+const TableOfContent = require('../models/TableOfContent');
 
 const createCourse = asyncHandler(async (req, res) => {
   const { name, author, sectionCount, description } = req.body;
@@ -66,17 +67,18 @@ const getCourseById = asyncHandler(async (req, res) => {
 
 const deleteCourse = asyncHandler(async (req, res) => {
   const { courseId } = req.params;
-  if (!courseId) {
-    res.status(StatusCodes.BAD_REQUEST);
-    throw new Error('Course ID is required');
-  }
 
-  const course = await Course.findByIdAndDelete(courseId);
+  const course = await Course.findById(courseId);
   if (!course) {
     res.status(StatusCodes.NOT_FOUND);
     throw new Error('Course not found');
   }
 
+  if (course.tableOfContent.length > 0) {
+    await TableOfContent.deleteMany({ _id: { $in: course.tableOfContent } });
+  }
+
+  await course.deleteOne();
   res.status(StatusCodes.OK).json({ message: 'Course removed' });
 });
 

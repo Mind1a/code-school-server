@@ -77,14 +77,17 @@ const getTocById = asyncHandler(async (req, res) => {
 const deleteTocById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const toc = await TableOfContent.findByIdAndDelete(id);
+  const toc = await TableOfContent.findById(id);
 
   if (!toc) {
     return res
       .status(StatusCodes.NOT_FOUND)
       .json({ message: 'TableOfContent not found' });
   }
-
+  if (toc.section.length > 0) {
+    await TocSection.deleteMany({ _id: { $in: toc.section } });
+  }
+  await toc.deleteOne();
   res.status(StatusCodes.OK).json({ message: 'table of content deleted' });
 });
 

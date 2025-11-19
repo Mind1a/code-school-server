@@ -56,38 +56,36 @@ const createChapter = asyncHandler(async (req, res) => {
   res.status(StatusCodes.CREATED).json(chapter);
 });
 
-const getChapter = asyncHandler(async (req, res) => {
-  const { page = 1 } = req.query;
+const getChapter = asyncHandler(async (_, res) => {
+  const chapters = await Chapter.find();
+  res.status(StatusCodes.OK).json(chapters);
+});
 
+const getChapterById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
   const count = await Chapter.countDocuments();
-  const skip = parseInt(page) - 1;
 
-  const chapters = await Chapter.find()
-    .sort({ order: 1 })
-    .skip(Math.max(0, skip - 1))
-    .limit(3);
+  const allChapters = await Chapter.find().sort({ chapterNumber: 1 });
 
-  const currentIndex = skip === 0 ? 0 : 1;
+  const currentIndex = allChapters.findIndex(
+    (chapter) => chapter._id.toString() === id
+  );
+
+  if (currentIndex === -1) {
+    return res.status(StatusCodes.NOT_FOUND).json({
+      message: 'Chapter not found',
+    });
+  }
 
   res.status(StatusCodes.OK).json({
-    chapter: chapters[currentIndex],
-    prevChapter: chapters[currentIndex - 1]?._id || null,
-    nextChapter: chapters[currentIndex + 1]?._id || null,
-    page: parseInt(page),
+    chapter: allChapters[currentIndex],
+    prevChapter: allChapters[currentIndex - 1]?._id || null,
+    nextChapter: allChapters[currentIndex + 1]?._id || null,
+    page: currentIndex + 1,
     totalPages: count,
     totalChapters: count,
   });
 });
-
-const getChapterById = asyncHandler(async (req, res) => {
-  const chapter = await Chapter.findById(req.params.id);
-  if (!chapter) {
-    res.status(StatusCodes.NOT_FOUND);
-    throw new Error('Chapter not found');
-  }
-  res.status(StatusCodes.OK).json(chapter);
-});
-
 const deleteChapter = asyncHandler(async (req, res) => {
   const chapter = await Chapter.findByIdAndDelete(req.params.id);
   if (!chapter) {
