@@ -66,29 +66,50 @@ const getChapter = asyncHandler(async (_, res) => {
 
 const getChapterById = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const count = await Chapter.countDocuments();
 
-  const allChapters = await Chapter.find().sort({ chapterNumber: 1 });
+  const chapter = await Chapter.findById(id);
 
-  const currentIndex = allChapters.findIndex(
-    (chapter) => chapter._id.toString() === id
-  );
-
-  if (currentIndex === -1) {
+  if (!chapter) {
     return res.status(StatusCodes.NOT_FOUND).json({
       message: 'Chapter not found',
     });
   }
 
+  const section = await TocSection.findById(chapter.sectionId).populate(
+    'chapter'
+  );
+
+  if (!section) {
+    return res.status(StatusCodes.NOT_FOUND).json({
+      message: 'Section not found',
+    });
+  }
+
+  const sectionChapters = await Chapter.find({
+    _id: { $in: section.chapter },
+  }).sort({ chapterNumber: 1 });
+
+  const currentIndex = sectionChapters.findIndex(
+    (chapter) => chapter._id.toString() === id
+  );
+
+  const prevChapterId =
+    currentIndex > 0 ? sectionChapters[currentIndex - 1]._id : null;
+
+  const nextChapterId =
+    currentIndex < sectionChapters.length - 1
+      ? sectionChapters[currentIndex + 1]._id
+      : null;
+
   res.status(StatusCodes.OK).json({
-    chapter: allChapters[currentIndex],
-    prevChapter: allChapters[currentIndex - 1]?._id || null,
-    nextChapter: allChapters[currentIndex + 1]?._id || null,
+    chapter,
+    prevChapter: prevChapterId,
+    nextChapter: nextChapterId,
     page: currentIndex + 1,
-    totalPages: count,
-    totalChapters: count,
+    totalPages: sectionChapters.length,
   });
 });
+
 const deleteChapter = asyncHandler(async (req, res) => {
   const chapter = await Chapter.findByIdAndDelete(req.params.id);
   if (!chapter) {
