@@ -11,11 +11,11 @@ const {
 const courseRoutes = express.Router();
 
 courseRoutes.get('/courses', getCourse);
-courseRoutes.post('/courses', upload.single('courseImage'), createCourse);
+courseRoutes.post('/courses', upload.single('projectPicture'), createCourse);
 courseRoutes.get('/courses/:courseId', getCourseById);
 courseRoutes.patch(
   '/courses/:courseId',
-  upload.single('courseImage'),
+  upload.single('projectPicture'),
   updateCourse
 );
 courseRoutes.delete('/courses/:courseId', deleteCourse);
