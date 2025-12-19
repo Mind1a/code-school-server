@@ -46,11 +46,7 @@ const getCourse = asyncHandler(async (_, res) => {
       select: 'order title chapter homework',
       populate: {
         path: 'chapter',
-        select: 'chapterNumber chapterTitle',
-        populate: {
-          path: 'homework',
-          options: { sort: { order: 1 } },
-        },
+        select: 'chapterNumber chapterTitle homework',
       },
     },
   });
@@ -68,11 +64,7 @@ const getCourseById = asyncHandler(async (req, res) => {
       select: 'order title chapter',
       populate: {
         path: 'chapter',
-        select: 'chapterNumber chapterTitle',
-        populate: {
-          path: 'homework',
-          options: { sort: { order: 1 } },
-        },
+        select: 'chapterNumber chapterTitle homework',
       },
     },
   });
