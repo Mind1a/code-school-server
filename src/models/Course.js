@@ -7,15 +7,12 @@ const CourseSchema = new mongoose.Schema(
     sectionCount: { type: Number, required: true },
     description: { type: String },
     projectPicture: { type: String },
-    tableOfContent: {
-      type: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'TableOfContent',
-        },
-      ],
-      default: [],
-    },
+    tableOfContent: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'TableOfContent',
+      },
+    ],
   },
   { timestamps: true }
 );

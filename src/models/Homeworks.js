@@ -6,9 +6,9 @@ const HomeworkSchema = new mongoose.Schema(
     question: { type: String, required: true },
     help: { type: String },
     correctAnswer: { type: String, required: true },
-    sectionId: {
+    chapterId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'TocSection',
+      ref: 'Chapter',
       required: true,
     },
   },

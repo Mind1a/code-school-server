@@ -44,6 +44,14 @@ const getCourse = asyncHandler(async (_, res) => {
     populate: {
       path: 'section',
       select: 'order title chapter homework',
+      populate: {
+        path: 'chapter',
+        select: 'chapterNumber chapterTitle',
+        populate: {
+          path: 'homework',
+          options: { sort: { order: 1 } },
+        },
+      },
     },
   });
   res.status(StatusCodes.OK).json(courses);
@@ -57,10 +65,18 @@ const getCourseById = asyncHandler(async (req, res) => {
     select: 'order title section',
     populate: {
       path: 'section',
-      select: 'order title chapter homework',
-      populate: [{ path: 'chapter' }, { path: 'homework' }],
+      select: 'order title chapter',
+      populate: {
+        path: 'chapter',
+        select: 'chapterNumber chapterTitle',
+        populate: {
+          path: 'homework',
+          options: { sort: { order: 1 } },
+        },
+      },
     },
   });
+
   if (!course) {
     res.status(StatusCodes.NOT_FOUND);
     throw new Error('Course not found');

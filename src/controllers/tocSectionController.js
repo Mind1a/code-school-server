@@ -3,7 +3,6 @@ const { StatusCodes } = require('http-status-codes');
 const TocSection = require('../models/TocSection');
 const TableOfContent = require('../models/TableOfContent');
 const Chapter = require('../models/Chapter');
-const Homework = require('../models/Homeworks');
 
 const createTocSection = asyncHandler(async (req, res) => {
   const { order, title, tocId } = req.body;
@@ -68,9 +67,7 @@ const deleteTocSectionById = asyncHandler(async (req, res) => {
   if (tocSection.chapter.length > 0) {
     await Chapter.deleteMany({ _id: { $in: tocSection.chapter } });
   }
-  if (tocSection.homework.length > 0) {
-    await Homework.deleteMany({ _id: { $in: tocSection.homework } });
-  }
+
   await tocSection.deleteOne();
   res.status(StatusCodes.OK).json({ message: 'table of content deleted' });
 });

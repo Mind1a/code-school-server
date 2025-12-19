@@ -1,22 +1,29 @@
 const asyncHandler = require('express-async-handler');
 const { StatusCodes } = require('http-status-codes');
 const Homework = require('../models/Homeworks');
-const TocSection = require('../models/TocSection');
+const Chapter = require('../models/Chapter');
 
 const createHomework = asyncHandler(async (req, res) => {
-  const { order, question, help, correctAnswer, sectionId } = req.body;
+  const { order, question, help, correctAnswer, chapterId } = req.body;
 
-  if (!order || !question || !correctAnswer || !sectionId) {
+  if (!order || !question || !correctAnswer || !chapterId) {
     return res.status(StatusCodes.BAD_REQUEST).json({
-      message: 'order, question, correctAnswer and sectionId are required',
+      message: 'order, question, correctAnswer and chapterId are required',
     });
   }
 
-  const existingHomework = await Homework.findOne({ question, sectionId });
+  const chapter = await Chapter.findById(chapterId);
+  if (!chapter) {
+    return res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ message: 'Chapter not found' });
+  }
+
+  const existingHomework = await Homework.findOne({ question, chapterId });
   if (existingHomework) {
     return res
       .status(StatusCodes.CONFLICT)
-      .json({ message: 'Homework already exists in this section' });
+      .json({ message: 'Homework already exists in this chapter' });
   }
 
   const homework = await Homework.create({
@@ -24,64 +31,60 @@ const createHomework = asyncHandler(async (req, res) => {
     question,
     help,
     correctAnswer,
-    sectionId,
+    chapterId,
   });
 
-  const section = await TocSection.findById(sectionId);
-  section.homework.push(homework._id);
-  await section.save();
+  chapter.homework.push(homework._id);
+  await chapter.save();
+
   res.status(StatusCodes.CREATED).json(homework);
 });
 
 const getHomeworks = asyncHandler(async (_, res) => {
-  const allHomeworks = await Homework.find();
+  const allHomeworks = await Homework.find().populate('chapterId');
   res.status(StatusCodes.OK).json(allHomeworks);
 });
 
 const getHomeworkById = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const homework = await Homework.findById(req.params.id).populate('chapterId');
 
-  const homework = await Homework.findById(id);
   if (!homework) {
     return res
       .status(StatusCodes.NOT_FOUND)
       .json({ message: 'Homework not found' });
   }
 
-  res.json(homework);
+  res.status(StatusCodes.OK).json(homework);
 });
 
 const deleteHomeworkById = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-
-  const homework = await Homework.findByIdAndDelete(id);
+  const homework = await Homework.findById(req.params.id);
 
   if (!homework) {
     return res
       .status(StatusCodes.NOT_FOUND)
       .json({ message: 'Homework not found' });
   }
+
+  await Chapter.findByIdAndUpdate(homework.chapterId, {
+    $pull: { homework: homework._id },
+  });
+
+  await homework.deleteOne();
 
   res.status(StatusCodes.OK).json({ message: 'Homework deleted' });
 });
 
-// UPDATE
 const updateHomework = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { order, question, help, correctAnswer, sectionId } = req.body;
-
-  if (!id) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ message: 'id is required' });
-  }
+  const { order, question, help, correctAnswer, chapterId } = req.body;
 
   if (
     order === undefined &&
     question === undefined &&
     help === undefined &&
     correctAnswer === undefined &&
-    sectionId === undefined
+    chapterId === undefined
   ) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       message: 'at least one field must be provided',
@@ -93,7 +96,7 @@ const updateHomework = asyncHandler(async (req, res) => {
   if (question !== undefined) update.question = question;
   if (help !== undefined) update.help = help;
   if (correctAnswer !== undefined) update.correctAnswer = correctAnswer;
-  if (sectionId !== undefined) update.sectionId = sectionId;
+  if (chapterId !== undefined) update.chapterId = chapterId;
 
   const updatedHomework = await Homework.findByIdAndUpdate(
     id,

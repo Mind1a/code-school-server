@@ -14,6 +14,12 @@ const ChapterSchema = new mongoose.Schema(
       ref: 'TocSection',
       required: true,
     },
+    homework: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Homework',
+      },
+    ],
   },
   { timestamps: true }
 );

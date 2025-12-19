@@ -60,7 +60,11 @@ const createChapter = asyncHandler(async (req, res) => {
 });
 
 const getChapter = asyncHandler(async (_, res) => {
-  const chapters = await Chapter.find();
+  const chapters = await Chapter.find().populate({
+    path: 'homework',
+    options: { sort: { order: 1 } },
+  });
+
   res.status(StatusCodes.OK).json(chapters);
 });
 
