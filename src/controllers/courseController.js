@@ -40,16 +40,22 @@ const createCourse = asyncHandler(async (req, res) => {
 const getCourse = asyncHandler(async (_, res) => {
   const courses = await Course.find().populate({
     path: 'tableOfContent',
-    select: 'order title section _id',
+    select: 'order title section',
     populate: {
       path: 'section',
-      select: 'order title chapter homework',
+      select: 'order title chapter',
       populate: {
         path: 'chapter',
         select: 'chapterNumber chapterTitle homework',
+        populate: {
+          path: 'homework',
+          model: 'Homework',
+          select: 'order question help correctAnswer chapterId',
+        },
       },
     },
   });
+
   res.status(StatusCodes.OK).json(courses);
 });
 
@@ -65,6 +71,11 @@ const getCourseById = asyncHandler(async (req, res) => {
       populate: {
         path: 'chapter',
         select: 'chapterNumber chapterTitle homework',
+        populate: {
+          path: 'homework',
+          model: 'Homework',
+          select: 'order question help correctAnswer chapterId',
+        },
       },
     },
   });
