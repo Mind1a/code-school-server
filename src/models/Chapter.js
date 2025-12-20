@@ -7,6 +7,7 @@ const ChapterSchema = new mongoose.Schema(
     subTitle: { type: String, required: true },
     description: { type: String, required: true },
     realLifeExample: { type: String, required: true },
+    codingExample: { type: String, required: true },
     imageUrl: { type: String },
     task: { type: String, required: true },
     sectionId: {

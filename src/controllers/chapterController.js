@@ -13,20 +13,22 @@ const createChapter = asyncHandler(async (req, res) => {
     task,
     sectionId,
     realLifeExample,
+    codingExample,
   } = req.body;
 
   if (
-    !chapterNumber ||
+    chapterNumber === undefined ||
     !chapterTitle ||
     !subTitle ||
     !description ||
     !task ||
     !sectionId ||
-    !realLifeExample
+    !realLifeExample ||
+    !codingExample
   ) {
     res.status(StatusCodes.BAD_REQUEST);
     throw new Error(
-      'chapterNumber, chapterTitle, subTitle, description, task, realLifeExample, sectionId are required'
+      'chapterNumber, chapterTitle, subTitle, description, codingExample, task, realLifeExample, sectionId are required'
     );
   }
 
@@ -45,6 +47,7 @@ const createChapter = asyncHandler(async (req, res) => {
     sectionId,
     imageUrl,
     realLifeExample,
+    codingExample,
   });
 
   const tocSection = await TocSection.findById(sectionId);
@@ -137,6 +140,8 @@ const updateChapter = asyncHandler(async (req, res) => {
     description,
     task,
     sectionId,
+    realLifeExample,
+    codingExample,
   } = req.body;
 
   if (chapterNumber !== undefined) chapter.chapterNumber = chapterNumber;
@@ -145,6 +150,8 @@ const updateChapter = asyncHandler(async (req, res) => {
   if (description !== undefined) chapter.description = description;
   if (task !== undefined) chapter.task = task;
   if (sectionId !== undefined) chapter.sectionId = sectionId;
+  if (realLifeExample !== undefined) chapter.realLifeExample = realLifeExample;
+  if (codingExample !== undefined) chapter.codingExample = codingExample;
 
   if (req.file) {
     const result = await uploadToCloudinary(req.file.path, 'codeSchool/album');
