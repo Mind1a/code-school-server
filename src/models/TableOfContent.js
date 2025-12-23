@@ -4,11 +4,11 @@ const TocItemSchemaema = new mongoose.Schema(
   {
     order: { type: Number, required: true },
     title: { type: String, required: true },
-    section: {
+    chapter: {
       type: [
         {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'TocSection',
+          ref: 'Chapter',
         },
       ],
       default: [],

@@ -40,18 +40,17 @@ const createCourse = asyncHandler(async (req, res) => {
 const getCourse = asyncHandler(async (_, res) => {
   const courses = await Course.find().populate({
     path: 'tableOfContent',
-    select: 'order title section',
+    select: 'order title chapter',
+    options: { sort: { order: 1 } },
     populate: {
-      path: 'section',
-      select: 'order title chapter',
+      path: 'chapter',
+      select: 'chapterNumber chapterTitle homework',
+      options: { sort: { chapterNumber: 1 } },
       populate: {
-        path: 'chapter',
-        select: 'chapterNumber chapterTitle homework',
-        populate: {
-          path: 'homework',
-          model: 'Homework',
-          select: 'order question help correctAnswer chapterId',
-        },
+        path: 'homework',
+        model: 'Homework',
+        select: 'order question help correctAnswer chapterId',
+        options: { sort: { order: 1 } },
       },
     },
   });
@@ -64,18 +63,17 @@ const getCourseById = asyncHandler(async (req, res) => {
 
   const course = await Course.findById(courseId).populate({
     path: 'tableOfContent',
-    select: 'order title section',
+    select: 'order title chapter',
+    options: { sort: { order: 1 } },
     populate: {
-      path: 'section',
-      select: 'order title chapter',
+      path: 'chapter',
+      select: 'chapterNumber chapterTitle homework',
+      options: { sort: { chapterNumber: 1 } },
       populate: {
-        path: 'chapter',
-        select: 'chapterNumber chapterTitle homework',
-        populate: {
-          path: 'homework',
-          model: 'Homework',
-          select: 'order question help correctAnswer chapterId',
-        },
+        path: 'homework',
+        model: 'Homework',
+        select: 'order question help correctAnswer chapterId',
+        options: { sort: { order: 1 } },
       },
     },
   });

@@ -2,7 +2,7 @@ const asyncHandler = require('express-async-handler');
 const { StatusCodes } = require('http-status-codes');
 const { uploadToCloudinary } = require('../lib/cloudinaryUpload');
 const Chapter = require('../models/Chapter');
-const TocSection = require('../models/TocSection');
+const TableOfContent = require('../models/TableOfContent');
 
 const createChapter = asyncHandler(async (req, res) => {
   const {
@@ -11,7 +11,7 @@ const createChapter = asyncHandler(async (req, res) => {
     subTitle,
     description,
     task,
-    sectionId,
+    tocId,
     realLifeExample,
     codingExample,
   } = req.body;
@@ -22,14 +22,14 @@ const createChapter = asyncHandler(async (req, res) => {
     !subTitle ||
     !description ||
     !task ||
-    !sectionId ||
+    !tocId ||
     !realLifeExample ||
     !codingExample
   ) {
-    res.status(StatusCodes.BAD_REQUEST);
-    throw new Error(
-      'chapterNumber, chapterTitle, subTitle, description, codingExample, task, realLifeExample, sectionId are required'
-    );
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message:
+        'chapterNumber, chapterTitle, subTitle, description, codingExample, task, realLifeExample, tocId are required',
+    });
   }
 
   let imageUrl = null;
@@ -38,26 +38,27 @@ const createChapter = asyncHandler(async (req, res) => {
     imageUrl = result.secure_url;
   }
 
+  const toc = await TableOfContent.findById(tocId);
+  if (!toc) {
+    return res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ message: 'TableOfContent not found' });
+  }
+
   const chapter = await Chapter.create({
     chapterNumber,
     chapterTitle,
     subTitle,
     description,
     task,
-    sectionId,
+    tocId,
     imageUrl,
     realLifeExample,
     codingExample,
   });
 
-  const tocSection = await TocSection.findById(sectionId);
-  if (!tocSection) {
-    res.status(StatusCodes.NOT_FOUND);
-    throw new Error('TocSection not found');
-  }
-
-  tocSection.chapter.push(chapter._id);
-  await tocSection.save();
+  toc.chapter.push(chapter._id);
+  await toc.save();
 
   res.status(StatusCodes.CREATED).json(chapter);
 });
@@ -74,46 +75,37 @@ const getChapter = asyncHandler(async (_, res) => {
 const getChapterById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const chapter = await Chapter.findById(id);
+  const chapter = await Chapter.findById(id).populate({
+    path: 'homework',
+    options: { sort: { order: 1 } },
+  });
 
   if (!chapter) {
-    return res.status(StatusCodes.NOT_FOUND).json({
-      message: 'Chapter not found',
-    });
+    return res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ message: 'Chapter not found' });
   }
 
-  const section = await TocSection.findById(chapter.sectionId).populate(
-    'chapter'
-  );
+  const toc = await TableOfContent.findById(chapter.tocId).populate({
+    path: 'chapter',
+    options: { sort: { chapterNumber: 1 } },
+  });
 
-  if (!section) {
-    return res.status(StatusCodes.NOT_FOUND).json({
-      message: 'Section not found',
-    });
+  if (!toc) {
+    return res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ message: 'TableOfContent not found' });
   }
 
-  const sectionChapters = await Chapter.find({
-    _id: { $in: section.chapter },
-  }).sort({ chapterNumber: 1 });
-
-  const currentIndex = sectionChapters.findIndex(
-    (chapter) => chapter._id.toString() === id
-  );
-
-  const prevChapterId =
-    currentIndex > 0 ? sectionChapters[currentIndex - 1]._id : null;
-
-  const nextChapterId =
-    currentIndex < sectionChapters.length - 1
-      ? sectionChapters[currentIndex + 1]._id
-      : null;
+  const chapters = toc.chapter;
+  const currentIndex = chapters.findIndex((ch) => ch._id.toString() === id);
 
   res.status(StatusCodes.OK).json({
     chapter,
-    prevChapter: prevChapterId,
-    nextChapter: nextChapterId,
+    prevChapter: chapters[currentIndex - 1]?._id ?? null,
+    nextChapter: chapters[currentIndex + 1]?._id ?? null,
     page: currentIndex + 1,
-    totalPages: sectionChapters.length,
+    totalPages: chapters.length,
   });
 });
 
@@ -139,7 +131,7 @@ const updateChapter = asyncHandler(async (req, res) => {
     subTitle,
     description,
     task,
-    sectionId,
+    tocId,
     realLifeExample,
     codingExample,
   } = req.body;
@@ -149,7 +141,7 @@ const updateChapter = asyncHandler(async (req, res) => {
   if (subTitle !== undefined) chapter.subTitle = subTitle;
   if (description !== undefined) chapter.description = description;
   if (task !== undefined) chapter.task = task;
-  if (sectionId !== undefined) chapter.sectionId = sectionId;
+  if (tocId !== undefined) chapter.tocId = tocId;
   if (realLifeExample !== undefined) chapter.realLifeExample = realLifeExample;
   if (codingExample !== undefined) chapter.codingExample = codingExample;
 

@@ -40,23 +40,10 @@ const createToc = asyncHandler(async (req, res) => {
 });
 
 const getToc = asyncHandler(async (_, res) => {
-  const totalSections = await TocSection.countDocuments();
-
-  const allToc = await TableOfContent.aggregate([
-    {
-      $lookup: {
-        from: 'tocsections',
-        localField: 'section',
-        foreignField: '_id',
-        as: 'section',
-      },
-    },
-    {
-      $set: {
-        totalSections: totalSections,
-      },
-    },
-  ]);
+  const allToc = await TableOfContent.find().populate({
+    path: 'chapter',
+    options: { sort: { chapterNumber: 1 } },
+  });
 
   res.status(StatusCodes.OK).json(allToc);
 });
@@ -64,31 +51,39 @@ const getToc = asyncHandler(async (_, res) => {
 const getTocById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const toc = await TableOfContent.findById(id).populate('section');
+  const toc = await TableOfContent.findById(id).populate({
+    path: 'chapter',
+    options: { sort: { chapterNumber: 1 } },
+  });
+
   if (!toc) {
     return res
       .status(StatusCodes.NOT_FOUND)
       .json({ message: 'TableOfContent not found' });
   }
 
-  res.json(toc);
+  res.status(StatusCodes.OK).json(toc);
 });
 
 const deleteTocById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   const toc = await TableOfContent.findById(id);
-
   if (!toc) {
     return res
       .status(StatusCodes.NOT_FOUND)
       .json({ message: 'TableOfContent not found' });
   }
-  if (toc.section.length > 0) {
-    await TocSection.deleteMany({ _id: { $in: toc.section } });
+
+  if (toc.chapter.length > 0) {
+    await Chapter.deleteMany({ _id: { $in: toc.chapter } });
   }
+
   await toc.deleteOne();
-  res.status(StatusCodes.OK).json({ message: 'table of content deleted' });
+
+  res
+    .status(StatusCodes.OK)
+    .json({ message: 'TableOfContent deleted successfully' });
 });
 
 const updateToc = asyncHandler(async (req, res) => {
