@@ -5,6 +5,11 @@ const CourseSchema = new mongoose.Schema(
     name: { type: String, required: true },
     author: { type: String, required: true },
     sectionCount: { type: Number, required: true },
+    stack: {
+      type: String,
+      enum: ['python', 'html'],
+      required: true,
+    },
     description: { type: String },
     projectPicture: { type: String },
     tableOfContent: {

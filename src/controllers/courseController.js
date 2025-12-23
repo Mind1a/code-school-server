@@ -4,12 +4,19 @@ const { uploadToCloudinary } = require('../lib/cloudinaryUpload');
 const Course = require('../models/Course');
 const TableOfContent = require('../models/TableOfContent');
 
-const createCourse = asyncHandler(async (req, res) => {
-  const { name, author, sectionCount, description } = req.body;
+const allowedStacks = ['python', 'html'];
 
-  if (!name || !author || !sectionCount) {
+const createCourse = asyncHandler(async (req, res) => {
+  const { name, author, sectionCount, description, stack } = req.body;
+
+  if (!name || !author || !sectionCount || !stack) {
     res.status(StatusCodes.BAD_REQUEST);
-    throw new Error('name, author, and sectionCount are required');
+    throw new Error('name, author, sectionCount and stack are required');
+  }
+
+  if (!allowedStacks.includes(stack.toLowerCase())) {
+    res.status(StatusCodes.BAD_REQUEST);
+    throw new Error(`Stack must be one of: ${allowedStacks.join(', ')}`);
   }
 
   if (!req.file) {
@@ -30,6 +37,7 @@ const createCourse = asyncHandler(async (req, res) => {
     author,
     sectionCount,
     description,
+    stack: stack.toLowerCase(),
     projectPicture: result.secure_url,
     tableOfContent: [],
   });
@@ -105,7 +113,7 @@ const deleteCourse = asyncHandler(async (req, res) => {
 
 const updateCourse = asyncHandler(async (req, res) => {
   const { courseId } = req.params;
-  const { name, author, sectionCount, description } = req.body;
+  const { name, author, sectionCount, description, stack } = req.body;
 
   if (!courseId) {
     return res
@@ -118,6 +126,13 @@ const updateCourse = asyncHandler(async (req, res) => {
   if (author !== undefined) update.author = author;
   if (sectionCount !== undefined) update.sectionCount = sectionCount;
   if (description !== undefined) update.description = description;
+  if (stack !== undefined) {
+    if (!allowedStacks.includes(stack.toLowerCase())) {
+      res.status(StatusCodes.BAD_REQUEST);
+      throw new Error(`Stack must be one of: ${allowedStacks.join(', ')}`);
+    }
+    update.stack = stack.toLowerCase();
+  }
 
   if (req.file) {
     const result = await uploadToCloudinary(req.file.path, 'codeSchool/album');
