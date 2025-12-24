@@ -234,11 +234,60 @@ const createAdminPanel = () => {
           },
           listProperties: ['order', 'title', 'courseId', 'createdAt'],
           actions: {
+            new: {
+              after: async (response, request, context) => {
+                const tocId = response.record.id;
+                const courseId = response.record.params.courseId;
+
+                if (courseId) {
+                  await Course.findByIdAndUpdate(
+                    courseId,
+                    { $addToSet: { tableOfContent: tocId } },
+                    { new: true }
+                  );
+                }
+
+                return response;
+              },
+            },
+            edit: {
+              after: async (response, request, context) => {
+                const tocId = response.record.id;
+                const newCourseId = response.record.params.courseId;
+                const oldCourseId = context.record.params.courseId;
+
+                if (newCourseId !== oldCourseId) {
+                  if (oldCourseId) {
+                    await Course.findByIdAndUpdate(oldCourseId, {
+                      $pull: { tableOfContent: tocId },
+                    });
+                  }
+
+                  if (newCourseId) {
+                    await Course.findByIdAndUpdate(newCourseId, {
+                      $addToSet: { tableOfContent: tocId },
+                    });
+                  }
+                }
+
+                return response;
+              },
+            },
             delete: {
               handler: async (request, response, context) => {
                 const { record, resource } = context;
                 try {
-                  await TableOfContent.findByIdAndDelete(record.id());
+                  const tocId = record.id();
+                  const courseId = record.params.courseId;
+
+                  if (courseId) {
+                    await Course.findByIdAndUpdate(courseId, {
+                      $pull: { tableOfContent: tocId },
+                    });
+                  }
+
+                  await TableOfContent.findByIdAndDelete(tocId);
+
                   return {
                     record: record.toJSON(),
                     redirectUrl: resource.href(),
@@ -319,11 +368,60 @@ const createAdminPanel = () => {
             'createdAt',
           ],
           actions: {
+            new: {
+              after: async (response, request, context) => {
+                const chapterId = response.record.id;
+                const tocId = response.record.params.tocId;
+
+                if (tocId) {
+                  await TableOfContent.findByIdAndUpdate(
+                    tocId,
+                    { $addToSet: { chapter: chapterId } },
+                    { new: true }
+                  );
+                }
+
+                return response;
+              },
+            },
+            edit: {
+              after: async (response, request, context) => {
+                const chapterId = response.record.id;
+                const newTocId = response.record.params.tocId;
+                const oldTocId = context.record.params.tocId;
+
+                if (newTocId !== oldTocId) {
+                  if (oldTocId) {
+                    await TableOfContent.findByIdAndUpdate(oldTocId, {
+                      $pull: { chapter: chapterId },
+                    });
+                  }
+
+                  if (newTocId) {
+                    await TableOfContent.findByIdAndUpdate(newTocId, {
+                      $addToSet: { chapter: chapterId },
+                    });
+                  }
+                }
+
+                return response;
+              },
+            },
             delete: {
               handler: async (request, response, context) => {
                 const { record, resource } = context;
                 try {
-                  await Chapter.findByIdAndDelete(record.id());
+                  const chapterId = record.id();
+                  const tocId = record.params.tocId;
+
+                  if (tocId) {
+                    await TableOfContent.findByIdAndUpdate(tocId, {
+                      $pull: { chapter: chapterId },
+                    });
+                  }
+
+                  await Chapter.findByIdAndDelete(chapterId);
+
                   return {
                     record: record.toJSON(),
                     redirectUrl: resource.href(),
@@ -369,11 +467,60 @@ const createAdminPanel = () => {
           },
           listProperties: ['order', 'question', 'chapterId', 'createdAt'],
           actions: {
+            new: {
+              after: async (response, request, context) => {
+                const homeworkId = response.record.id;
+                const chapterId = response.record.params.chapterId;
+
+                if (chapterId) {
+                  await Chapter.findByIdAndUpdate(
+                    chapterId,
+                    { $addToSet: { homework: homeworkId } },
+                    { new: true }
+                  );
+                }
+
+                return response;
+              },
+            },
+            edit: {
+              after: async (response, request, context) => {
+                const homeworkId = response.record.id;
+                const newChapterId = response.record.params.chapterId;
+                const oldChapterId = context.record.params.chapterId;
+
+                if (newChapterId !== oldChapterId) {
+                  if (oldChapterId) {
+                    await Chapter.findByIdAndUpdate(oldChapterId, {
+                      $pull: { homework: homeworkId },
+                    });
+                  }
+
+                  if (newChapterId) {
+                    await Chapter.findByIdAndUpdate(newChapterId, {
+                      $addToSet: { homework: homeworkId },
+                    });
+                  }
+                }
+
+                return response;
+              },
+            },
             delete: {
               handler: async (request, response, context) => {
                 const { record, resource } = context;
                 try {
-                  await Homework.findByIdAndDelete(record.id());
+                  const homeworkId = record.id();
+                  const chapterId = record.params.chapterId;
+
+                  if (chapterId) {
+                    await Chapter.findByIdAndUpdate(chapterId, {
+                      $pull: { homework: homeworkId },
+                    });
+                  }
+
+                  await Homework.findByIdAndDelete(homeworkId);
+
                   return {
                     record: record.toJSON(),
                     redirectUrl: resource.href(),
