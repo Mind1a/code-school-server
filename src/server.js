@@ -10,6 +10,7 @@ const { courseRoutes } = require('./routes/courseRoutes');
 const { tocRoutes } = require('./routes/tableOfContentRoutes');
 const { chapterRoutes } = require('./routes/chapterRoutes');
 const { homeworkRoutes } = require('./routes/homeworkRoutes');
+const { authRoutes } = require('./routes/authRoutes');
 
 dotenv.config();
 
@@ -56,6 +57,7 @@ const startServer = async () => {
     app.use('/api', tocRoutes);
     app.use('/api', chapterRoutes);
     app.use('/api', homeworkRoutes);
+    app.use('/api', authRoutes);
 
     app.use((req, res, next) => {
       const error = new Error('Not Found - ' + req.originalUrl);
