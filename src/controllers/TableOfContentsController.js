@@ -2,7 +2,6 @@ const asyncHandler = require('express-async-handler');
 const { StatusCodes } = require('http-status-codes');
 const TableOfContent = require('../models/TableOfContent');
 const Course = require('../models/Course');
-const TocSection = require('../models/TocSection');
 
 const createToc = asyncHandler(async (req, res) => {
   const { order, title, courseId } = req.body;
