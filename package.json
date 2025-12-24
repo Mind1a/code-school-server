@@ -22,7 +22,6 @@
     "@adminjs/express": "^5.1.0",
     "@adminjs/mongoose": "^3.0.3",
     "adminjs": "^6.8.7",
-    "bcryptjs": "^3.0.3",
     "cloudinary": "^2.7.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -31,7 +30,6 @@
     "express-async-handler": "^1.2.0",
     "express-session": "^1.18.2",
     "http-status-codes": "^2.3.0",
-    "jsonwebtoken": "^9.0.3",
     "mongoose": "^7.8.7",
     "multer": "^2.0.2",
     "tslib": "^2.8.1"
