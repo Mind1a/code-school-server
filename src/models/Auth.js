@@ -39,4 +39,4 @@ authSchema.pre('save', async function (next) {
   next();
 });
 
-module.exports = mongoose.model('Auth', authSchema);
+module.exports = mongoose.model('auth', authSchema);
