@@ -6,6 +6,7 @@ const HomeworkSchema = new mongoose.Schema(
     question: { type: String, required: true },
     help: { type: String },
     correctAnswer: { type: String, required: true },
+    initialCode: { type: String, required: false },
     chapterId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Chapter',
