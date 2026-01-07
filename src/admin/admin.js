@@ -1,9 +1,9 @@
-const AdminJS = require('adminjs');
-const AdminJSMongoose = require('@adminjs/mongoose');
-const Course = require('../models/Course');
-const TableOfContent = require('../models/TableOfContent');
-const Chapter = require('../models/Chapter');
-const Homework = require('../models/Homeworks');
+const AdminJS = require("adminjs");
+const AdminJSMongoose = require("@adminjs/mongoose");
+const Course = require("../models/Course");
+const TableOfContent = require("../models/TableOfContent");
+const Chapter = require("../models/Chapter");
+const Homework = require("../models/Homeworks");
 
 AdminJS.registerAdapter({
   Resource: AdminJSMongoose.Resource,
@@ -12,70 +12,70 @@ AdminJS.registerAdapter({
 
 const createAdminPanel = () => {
   const adminOptions = {
-    rootPath: '/admin',
+    rootPath: "/admin",
     branding: {
-      companyName: 'CodeSchool Admin',
+      companyName: "CodeSchool Admin",
       softwareBrothers: false,
       logo: false,
     },
     locale: {
-      language: 'en',
-      availableLanguages: ['en', 'ka'],
+      language: "en",
+      availableLanguages: ["en", "ka"],
       translations: {
         en: {
           resources: {
             Course: {
-              name: 'Courses',
+              name: "Courses",
               properties: {
-                name: 'Course Name',
-                author: 'Author',
-                sectionCount: 'Section Count',
-                stack: 'Stack',
-                description: 'Description',
-                projectPicture: 'Course Picture',
-                tableOfContent: 'Table of Contents',
-                createdAt: 'Created At',
-                updatedAt: 'Updated At',
+                name: "Course Name",
+                author: "Author",
+                sectionCount: "Section Count",
+                stack: "Stack",
+                description: "Description",
+                projectPicture: "Course Picture",
+                tableOfContent: "Table of Contents",
+                createdAt: "Created At",
+                updatedAt: "Updated At",
               },
             },
             TableOfContent: {
-              name: 'Table of Contents',
+              name: "Table of Contents",
               properties: {
-                order: 'Order',
-                title: 'Title',
-                chapter: 'Chapters',
-                courseId: 'Course',
-                createdAt: 'Created At',
-                updatedAt: 'Updated At',
+                order: "Order",
+                title: "Title",
+                chapter: "Chapters",
+                courseId: "Course",
+                createdAt: "Created At",
+                updatedAt: "Updated At",
               },
             },
             Chapter: {
-              name: 'Chapters',
+              name: "Chapters",
               properties: {
-                chapterNumber: 'Chapter Number',
-                chapterTitle: 'Chapter Title',
-                subTitle: 'Subtitle',
-                description: 'Description',
-                realLifeExample: 'Real Life Example',
-                codingExample: 'Coding Example',
-                imageUrl: 'Image',
-                task: 'Task',
-                tocId: 'Table of Content',
-                homework: 'Homework',
-                createdAt: 'Created At',
-                updatedAt: 'Updated At',
+                chapterNumber: "Chapter Number",
+                chapterTitle: "Chapter Title",
+                subTitle: "Subtitle",
+                description: "Description",
+                realLifeExample: "Real Life Example",
+                codingExample: "Coding Example",
+                imageUrl: "Image",
+                task: "Task",
+                tocId: "Table of Content",
+                homework: "Homework",
+                createdAt: "Created At",
+                updatedAt: "Updated At",
               },
             },
             Homework: {
-              name: 'Homework',
+              name: "Homework",
               properties: {
-                order: 'Order',
-                question: 'Question',
-                help: 'Help',
-                correctAnswer: 'Correct Answer',
-                chapterId: 'Chapter',
-                createdAt: 'Created At',
-                updatedAt: 'Updated At',
+                order: "Order",
+                question: "Question",
+                help: "Help",
+                correctAnswer: "Correct Answer",
+                chapterId: "Chapter",
+                createdAt: "Created At",
+                updatedAt: "Updated At",
               },
             },
           },
@@ -83,57 +83,57 @@ const createAdminPanel = () => {
         ka: {
           resources: {
             Course: {
-              name: 'კურსები',
+              name: "კურსები",
               properties: {
-                name: 'კურსის სახელი',
-                author: 'ავტორი',
-                sectionCount: 'სექციების რაოდენობა',
-                stack: 'სტეკი',
-                description: 'აღწერა',
-                projectPicture: 'კურსის სურათი',
-                tableOfContent: 'სარჩევი',
-                createdAt: 'შექმნის თარიღი',
-                updatedAt: 'განახლების თარიღი',
+                name: "კურსის სახელი",
+                author: "ავტორი",
+                sectionCount: "სექციების რაოდენობა",
+                stack: "სტეკი",
+                description: "აღწერა",
+                projectPicture: "კურსის სურათი",
+                tableOfContent: "სარჩევი",
+                createdAt: "შექმნის თარიღი",
+                updatedAt: "განახლების თარიღი",
               },
             },
             TableOfContent: {
-              name: 'სარჩევი',
+              name: "სარჩევი",
               properties: {
-                order: 'რიგითობა',
-                title: 'სათაური',
-                chapter: 'თავები',
-                courseId: 'კურსი',
-                createdAt: 'შექმნის თარიღი',
-                updatedAt: 'განახლების თარიღი',
+                order: "რიგითობა",
+                title: "სათაური",
+                chapter: "თავები",
+                courseId: "კურსი",
+                createdAt: "შექმნის თარიღი",
+                updatedAt: "განახლების თარიღი",
               },
             },
             Chapter: {
-              name: 'თავები',
+              name: "თავები",
               properties: {
-                chapterNumber: 'თავის ნომერი',
-                chapterTitle: 'თავის სახელი',
-                subTitle: 'ქვესათაური',
-                description: 'აღწერა',
-                realLifeExample: 'რეალური მაგალითი',
-                codingExample: 'კოდის მაგალითი',
-                imageUrl: 'სურათი',
-                task: 'დავალება',
-                tocId: 'სარჩევი',
-                homework: 'საშინაო დავალება',
-                createdAt: 'შექმნის თარიღი',
-                updatedAt: 'განახლების თარიღი',
+                chapterNumber: "თავის ნომერი",
+                chapterTitle: "თავის სახელი",
+                subTitle: "ქვესათაური",
+                description: "აღწერა",
+                realLifeExample: "რეალური მაგალითი",
+                codingExample: "კოდის მაგალითი",
+                imageUrl: "სურათი",
+                task: "დავალება",
+                tocId: "სარჩევი",
+                homework: "საშინაო დავალება",
+                createdAt: "შექმნის თარიღი",
+                updatedAt: "განახლების თარიღი",
               },
             },
             Homework: {
-              name: 'საშინაო დავალებები',
+              name: "საშინაო დავალებები",
               properties: {
-                order: 'რიგითობა',
-                question: 'კითხვა',
-                help: 'დახმარება',
-                correctAnswer: 'სწორი პასუხი',
-                chapterId: 'თავი',
-                createdAt: 'შექმნის თარიღი',
-                updatedAt: 'განახლების თარიღი',
+                order: "რიგითობა",
+                question: "კითხვა",
+                help: "დახმარება",
+                correctAnswer: "სწორი პასუხი",
+                chapterId: "თავი",
+                createdAt: "შექმნის თარიღი",
+                updatedAt: "განახლების თარიღი",
               },
             },
           },
@@ -153,7 +153,7 @@ const createAdminPanel = () => {
               isVisible: { list: true, filter: false, show: true, edit: true },
             },
             description: {
-              type: 'textarea',
+              type: "textarea",
               props: {
                 rows: 4,
               },
@@ -174,12 +174,12 @@ const createAdminPanel = () => {
             },
           },
           listProperties: [
-            'name',
-            'author',
-            'stack',
-            'sectionCount',
-            'projectPicture',
-            'createdAt',
+            "name",
+            "author",
+            "stack",
+            "sectionCount",
+            "projectPicture",
+            "createdAt",
           ],
           actions: {
             delete: {
@@ -191,8 +191,8 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     redirectUrl: resource.href(),
                     notice: {
-                      message: 'წარმატებით წაიშალა',
-                      type: 'success',
+                      message: "წარმატებით წაიშალა",
+                      type: "success",
                     },
                   };
                 } catch (error) {
@@ -200,7 +200,7 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     notice: {
                       message: error.message,
-                      type: 'error',
+                      type: "error",
                     },
                   };
                 }
@@ -232,7 +232,7 @@ const createAdminPanel = () => {
               isVisible: { list: true, filter: true, show: true, edit: false },
             },
           },
-          listProperties: ['order', 'title', 'courseId', 'createdAt'],
+          listProperties: ["order", "title", "courseId", "createdAt"],
           actions: {
             new: {
               after: async (response, request, context) => {
@@ -292,8 +292,8 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     redirectUrl: resource.href(),
                     notice: {
-                      message: 'წარმატებით წაიშალა',
-                      type: 'success',
+                      message: "წარმატებით წაიშალა",
+                      type: "success",
                     },
                   };
                 } catch (error) {
@@ -301,7 +301,7 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     notice: {
                       message: error.message,
-                      type: 'error',
+                      type: "error",
                     },
                   };
                 }
@@ -322,28 +322,32 @@ const createAdminPanel = () => {
               isVisible: { list: true, filter: false, show: true, edit: true },
             },
             description: {
-              type: 'textarea',
+              type: "textarea",
               props: {
                 rows: 4,
               },
+              hint: "You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting",
             },
             realLifeExample: {
-              type: 'textarea',
+              type: "textarea",
               props: {
                 rows: 4,
               },
+              hint: "You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting",
             },
             codingExample: {
-              type: 'textarea',
+              type: "textarea",
               props: {
                 rows: 6,
               },
+              hint: "You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting",
             },
             task: {
-              type: 'textarea',
+              type: "textarea",
               props: {
                 rows: 3,
               },
+              hint: "You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting",
             },
             homework: {
               isVisible: {
@@ -361,11 +365,11 @@ const createAdminPanel = () => {
             },
           },
           listProperties: [
-            'chapterNumber',
-            'chapterTitle',
-            'tocId',
-            'imageUrl',
-            'createdAt',
+            "chapterNumber",
+            "chapterTitle",
+            "tocId",
+            "imageUrl",
+            "createdAt",
           ],
           actions: {
             new: {
@@ -426,8 +430,8 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     redirectUrl: resource.href(),
                     notice: {
-                      message: 'წარმატებით წაიშალა',
-                      type: 'success',
+                      message: "წარმატებით წაიშალა",
+                      type: "success",
                     },
                   };
                 } catch (error) {
@@ -435,7 +439,7 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     notice: {
                       message: error.message,
-                      type: 'error',
+                      type: "error",
                     },
                   };
                 }
@@ -453,7 +457,7 @@ const createAdminPanel = () => {
               isTitle: true,
             },
             help: {
-              type: 'textarea',
+              type: "textarea",
               props: {
                 rows: 3,
               },
@@ -465,7 +469,7 @@ const createAdminPanel = () => {
               isVisible: { list: true, filter: true, show: true, edit: false },
             },
           },
-          listProperties: ['order', 'question', 'chapterId', 'createdAt'],
+          listProperties: ["order", "question", "chapterId", "createdAt"],
           actions: {
             new: {
               after: async (response, request, context) => {
@@ -525,8 +529,8 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     redirectUrl: resource.href(),
                     notice: {
-                      message: 'წარმატებით წაიშალა',
-                      type: 'success',
+                      message: "წარმატებით წაიშალა",
+                      type: "success",
                     },
                   };
                 } catch (error) {
@@ -534,7 +538,7 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     notice: {
                       message: error.message,
-                      type: 'error',
+                      type: "error",
                     },
                   };
                 }
