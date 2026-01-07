@@ -8,7 +8,6 @@ const createChapter = asyncHandler(async (req, res) => {
   const {
     chapterNumber,
     chapterTitle,
-    subTitle,
     description,
     task,
     tocId,
@@ -19,7 +18,6 @@ const createChapter = asyncHandler(async (req, res) => {
   if (
     chapterNumber === undefined ||
     !chapterTitle ||
-    !subTitle ||
     !description ||
     !task ||
     !tocId ||
@@ -27,7 +25,7 @@ const createChapter = asyncHandler(async (req, res) => {
   ) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       message:
-        'chapterNumber, chapterTitle, subTitle, description, codingExample, task, realLifeExample, tocId are required',
+        'chapterNumber, chapterTitle, description, codingExample, task, realLifeExample, tocId are required',
     });
   }
 
@@ -47,7 +45,6 @@ const createChapter = asyncHandler(async (req, res) => {
   const chapter = await Chapter.create({
     chapterNumber,
     chapterTitle,
-    subTitle,
     description,
     task,
     tocId,
@@ -127,7 +124,6 @@ const updateChapter = asyncHandler(async (req, res) => {
   const {
     chapterNumber,
     chapterTitle,
-    subTitle,
     description,
     task,
     tocId,
@@ -137,7 +133,6 @@ const updateChapter = asyncHandler(async (req, res) => {
 
   if (chapterNumber !== undefined) chapter.chapterNumber = chapterNumber;
   if (chapterTitle !== undefined) chapter.chapterTitle = chapterTitle;
-  if (subTitle !== undefined) chapter.subTitle = subTitle;
   if (description !== undefined) chapter.description = description;
   if (task !== undefined) chapter.task = task;
   if (realLifeExample !== undefined) chapter.realLifeExample = realLifeExample;
