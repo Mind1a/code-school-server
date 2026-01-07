@@ -87,7 +87,7 @@ const deleteTocById = asyncHandler(async (req, res) => {
 
 const updateToc = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { order, title } = req.body;
+  const { order, title, courseId } = req.body;
 
   if (!id) {
     return res
@@ -95,28 +95,45 @@ const updateToc = asyncHandler(async (req, res) => {
       .json({ message: 'id is required' });
   }
 
-  if (order === undefined && title === undefined) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ message: 'order or title must be provided' });
+  if (order === undefined && title === undefined && courseId === undefined) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      message: 'order, title or courseId must be provided',
+    });
   }
 
-  const update = {};
-  if (order !== undefined) update.order = order;
-  if (title !== undefined) update.title = title;
-
-  const updatedToc = await TableOfContent.findByIdAndUpdate(
-    id,
-    { $set: update },
-    { new: true, runValidators: true }
-  );
-
-  if (!updatedToc) {
+  const toc = await TableOfContent.findById(id);
+  if (!toc) {
     return res
       .status(StatusCodes.NOT_FOUND)
-      .json({ message: 'table of content not found' });
+      .json({ message: 'TableOfContent not found' });
   }
 
+  if (order !== undefined) toc.order = order;
+  if (title !== undefined) toc.title = title;
+
+  if (
+    courseId !== undefined &&
+    courseId.toString() !== toc.courseId.toString()
+  ) {
+    const newCourse = await Course.findById(courseId);
+    if (!newCourse) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: 'Invalid courseId' });
+    }
+
+    await Course.updateMany(
+      { _id: toc.courseId },
+      { $pull: { tableOfContent: toc._id } }
+    );
+
+    newCourse.tableOfContent.push(toc._id);
+    await newCourse.save();
+
+    toc.courseId = courseId;
+  }
+
+  const updatedToc = await toc.save();
   res.status(StatusCodes.OK).json(updatedToc);
 });
 
