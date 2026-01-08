@@ -8,7 +8,7 @@ const ChapterSchema = new mongoose.Schema(
     realLifeExample: { type: String, required: false },
     codingExample: { type: String, required: false },
     imageUrl: { type: String },
-    task: { type: String, required: true },
+    task: { type: String, required: false },
     tocId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'TableOfContent',
