@@ -4,8 +4,8 @@ const ChapterSchema = new mongoose.Schema(
   {
     chapterNumber: { type: Number, required: true },
     chapterTitle: { type: String, required: true },
-    description: { type: String, required: true },
-    realLifeExample: { type: String, required: true },
+    description: { type: String, required: false },
+    realLifeExample: { type: String, required: false },
     codingExample: { type: String, required: false },
     imageUrl: { type: String },
     task: { type: String, required: true },

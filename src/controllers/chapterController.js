@@ -15,17 +15,10 @@ const createChapter = asyncHandler(async (req, res) => {
     codingExample,
   } = req.body;
 
-  if (
-    chapterNumber === undefined ||
-    !chapterTitle ||
-    !description ||
-    !task ||
-    !tocId ||
-    !realLifeExample
-  ) {
+  if (chapterNumber === undefined || !chapterTitle || !task || !tocId) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       message:
-        'chapterNumber, chapterTitle, description, codingExample, task, realLifeExample, tocId are required',
+        'chapterNumber, chapterTitle, subTitle, task, tocId are required',
     });
   }
 
