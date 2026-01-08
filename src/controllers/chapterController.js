@@ -13,11 +13,12 @@ const createChapter = asyncHandler(async (req, res) => {
     tocId,
     realLifeExample,
     codingExample,
+    projectTask,
   } = req.body;
 
   if (chapterNumber === undefined || !chapterTitle || !tocId) {
     return res.status(StatusCodes.BAD_REQUEST).json({
-      message: 'chapterNumber, chapterTitle, subTitle, tocId are required',
+      message: 'chapterNumber, chapterTitle, tocId are required',
     });
   }
 
@@ -43,6 +44,7 @@ const createChapter = asyncHandler(async (req, res) => {
     imageUrl,
     realLifeExample,
     codingExample,
+    projectTask,
   });
 
   toc.chapter.push(chapter._id);
@@ -121,6 +123,7 @@ const updateChapter = asyncHandler(async (req, res) => {
     tocId,
     realLifeExample,
     codingExample,
+    projectTask,
   } = req.body;
 
   if (chapterNumber !== undefined) chapter.chapterNumber = chapterNumber;
@@ -129,6 +132,7 @@ const updateChapter = asyncHandler(async (req, res) => {
   if (task !== undefined) chapter.task = task;
   if (realLifeExample !== undefined) chapter.realLifeExample = realLifeExample;
   if (codingExample !== undefined) chapter.codingExample = codingExample;
+  if (projectTask !== undefined) chapter.projectTask = projectTask;
 
   if (tocId !== undefined && tocId.toString() !== chapter.tocId.toString()) {
     await TableOfContent.updateMany(

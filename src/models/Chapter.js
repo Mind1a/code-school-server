@@ -9,6 +9,7 @@ const ChapterSchema = new mongoose.Schema(
     codingExample: { type: String, required: false },
     imageUrl: { type: String },
     task: { type: String, required: false },
+    projectTask: { type: String, required: false },
     tocId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'TableOfContent',
