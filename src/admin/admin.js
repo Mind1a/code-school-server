@@ -59,6 +59,7 @@ const createAdminPanel = () => {
                 codingExample: 'Coding Example',
                 imageUrl: 'Image',
                 task: 'Task',
+                projectTask: 'Project Task',
                 tocId: 'Table of Content',
                 homework: 'Homework',
                 createdAt: 'Created At',
@@ -72,6 +73,7 @@ const createAdminPanel = () => {
                 question: 'Question',
                 help: 'Help',
                 correctAnswer: 'Correct Answer',
+                description: 'Description',
                 initialCode: 'Initial Code',
                 chapterId: 'Chapter',
                 createdAt: 'Created At',
@@ -207,7 +209,6 @@ const createAdminPanel = () => {
                 const tocId = context.record.id();
                 const toc = await TableOfContent.findById(tocId);
 
-                // Store old courseId in the request for use in 'after'
                 if (toc) {
                   request._oldCourseId = toc.courseId.toString();
                 }
@@ -224,12 +225,10 @@ const createAdminPanel = () => {
                   newCourseId &&
                   newCourseId.toString() !== oldCourseId
                 ) {
-                  // Remove from old course
                   await Course.findByIdAndUpdate(oldCourseId, {
                     $pull: { tableOfContent: tocId },
                   });
 
-                  // Add to new course
                   await Course.findByIdAndUpdate(newCourseId, {
                     $addToSet: { tableOfContent: tocId },
                   });
@@ -288,6 +287,9 @@ const createAdminPanel = () => {
             chapterTitle: {
               isTitle: true,
             },
+            chapterNumber: {
+              isRequired: true,
+            },
             imageUrl: {
               isVisible: { list: true, filter: false, show: true, edit: true },
             },
@@ -297,6 +299,7 @@ const createAdminPanel = () => {
                 rows: 4,
               },
               hint: 'You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting',
+              isRequired: false,
             },
             realLifeExample: {
               type: 'textarea',
@@ -304,6 +307,7 @@ const createAdminPanel = () => {
                 rows: 4,
               },
               hint: 'You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting',
+              isRequired: false,
             },
             codingExample: {
               type: 'textarea',
@@ -311,6 +315,7 @@ const createAdminPanel = () => {
                 rows: 6,
               },
               hint: 'You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting',
+              isRequired: false,
             },
             task: {
               type: 'textarea',
@@ -318,6 +323,18 @@ const createAdminPanel = () => {
                 rows: 3,
               },
               hint: 'You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting',
+              isRequired: false,
+            },
+            projectTask: {
+              type: 'textarea',
+              props: {
+                rows: 4,
+              },
+              hint: 'You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting. This field is for project-related tasks.',
+              isRequired: false,
+            },
+            tocId: {
+              isRequired: true,
             },
             homework: {
               isVisible: {
@@ -376,12 +393,10 @@ const createAdminPanel = () => {
                 const oldTocId = request._oldTocId;
 
                 if (oldTocId && newTocId && newTocId.toString() !== oldTocId) {
-                  // Remove from old TOC
                   await TableOfContent.findByIdAndUpdate(oldTocId, {
                     $pull: { chapter: chapterId },
                   });
 
-                  // Add to new TOC
                   await TableOfContent.findByIdAndUpdate(newTocId, {
                     $addToSet: { chapter: chapterId },
                   });
@@ -441,12 +456,38 @@ const createAdminPanel = () => {
           properties: {
             question: {
               isTitle: true,
+              type: 'textarea',
+              props: {
+                rows: 3,
+              },
+              hint: 'The homework question or task description',
+            },
+            order: {
+              isRequired: true,
             },
             help: {
               type: 'textarea',
               props: {
                 rows: 3,
               },
+              hint: 'Helpful hints or guidance for completing the homework',
+              isRequired: false,
+            },
+            correctAnswer: {
+              type: 'textarea',
+              props: {
+                rows: 6,
+              },
+              hint: 'The correct answer or solution code for this homework',
+              isRequired: true,
+            },
+            description: {
+              type: 'textarea',
+              props: {
+                rows: 4,
+              },
+              hint: 'You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting',
+              isRequired: false,
             },
             initialCode: {
               type: 'textarea',
@@ -454,6 +495,10 @@ const createAdminPanel = () => {
                 rows: 6,
               },
               hint: 'Initial code template for the homework',
+              isRequired: false,
+            },
+            chapterId: {
+              isRequired: true,
             },
             createdAt: {
               isVisible: { list: true, filter: true, show: true, edit: false },
@@ -502,12 +547,10 @@ const createAdminPanel = () => {
                   newChapterId &&
                   newChapterId.toString() !== oldChapterId
                 ) {
-                  // Remove from old chapter
                   await Chapter.findByIdAndUpdate(oldChapterId, {
                     $pull: { homework: homeworkId },
                   });
 
-                  // Add to new chapter
                   await Chapter.findByIdAndUpdate(newChapterId, {
                     $addToSet: { homework: homeworkId },
                   });

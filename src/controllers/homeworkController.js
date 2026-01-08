@@ -4,8 +4,15 @@ const Homework = require('../models/Homeworks');
 const Chapter = require('../models/Chapter');
 
 const createHomework = asyncHandler(async (req, res) => {
-  const { order, question, help, correctAnswer, chapterId, initialCode } =
-    req.body;
+  const {
+    order,
+    question,
+    help,
+    correctAnswer,
+    chapterId,
+    initialCode,
+    description,
+  } = req.body;
 
   if (!order || !question || !correctAnswer || !chapterId) {
     return res.status(StatusCodes.BAD_REQUEST).json({
@@ -34,6 +41,7 @@ const createHomework = asyncHandler(async (req, res) => {
     correctAnswer,
     chapterId,
     initialCode,
+    description,
   });
 
   chapter.homework.push(homework._id);
@@ -79,8 +87,15 @@ const deleteHomeworkById = asyncHandler(async (req, res) => {
 
 const updateHomework = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { order, question, help, correctAnswer, chapterId, initialCode } =
-    req.body;
+  const {
+    order,
+    question,
+    help,
+    correctAnswer,
+    chapterId,
+    initialCode,
+    description,
+  } = req.body;
 
   if (
     order === undefined &&
@@ -107,6 +122,7 @@ const updateHomework = asyncHandler(async (req, res) => {
   if (help !== undefined) homework.help = help;
   if (correctAnswer !== undefined) homework.correctAnswer = correctAnswer;
   if (initialCode !== undefined) homework.initialCode = initialCode;
+  if (description !== undefined) homework.description = description;
 
   if (
     chapterId !== undefined &&
