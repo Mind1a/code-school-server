@@ -10,6 +10,11 @@ const ChapterSchema = new mongoose.Schema(
     imageUrl: { type: String },
     task: { type: String, required: false },
     projectTask: { type: String, required: false },
+    stack: {
+      type: String,
+      enum: ['python', 'html'],
+      required: false,
+    },
     tocId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'TableOfContent',
