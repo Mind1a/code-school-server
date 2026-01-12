@@ -3,6 +3,7 @@ const { StatusCodes } = require('http-status-codes');
 const { uploadToCloudinary } = require('../lib/cloudinaryUpload');
 const Chapter = require('../models/Chapter');
 const TableOfContent = require('../models/TableOfContent');
+const allowedStacks = ['python', 'html'];
 
 const createChapter = asyncHandler(async (req, res) => {
   const {
@@ -14,12 +15,18 @@ const createChapter = asyncHandler(async (req, res) => {
     realLifeExample,
     codingExample,
     projectTask,
+    stack,
   } = req.body;
 
   if (chapterNumber === undefined || !chapterTitle || !tocId) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       message: 'chapterNumber, chapterTitle, tocId are required',
     });
+  }
+
+  if (!allowedStacks.includes(stack.toLowerCase())) {
+    res.status(StatusCodes.BAD_REQUEST);
+    throw new Error(`Stack must be one of: ${allowedStacks.join(', ')}`);
   }
 
   let imageUrl = null;
@@ -38,6 +45,7 @@ const createChapter = asyncHandler(async (req, res) => {
   const chapter = await Chapter.create({
     chapterNumber,
     chapterTitle,
+    stack: stack.toLowerCase(),
     description,
     task,
     tocId,
@@ -124,6 +132,7 @@ const updateChapter = asyncHandler(async (req, res) => {
     realLifeExample,
     codingExample,
     projectTask,
+    stack,
   } = req.body;
 
   if (chapterNumber !== undefined) chapter.chapterNumber = chapterNumber;
@@ -133,6 +142,13 @@ const updateChapter = asyncHandler(async (req, res) => {
   if (realLifeExample !== undefined) chapter.realLifeExample = realLifeExample;
   if (codingExample !== undefined) chapter.codingExample = codingExample;
   if (projectTask !== undefined) chapter.projectTask = projectTask;
+  if (stack !== undefined) {
+    if (!allowedStacks.includes(stack.toLowerCase())) {
+      res.status(StatusCodes.BAD_REQUEST);
+      throw new Error(`Stack must be one of: ${allowedStacks.join(', ')}`);
+    }
+    chapter.stack = stack.toLowerCase();
+  }
 
   if (tocId !== undefined && tocId.toString() !== chapter.tocId.toString()) {
     await TableOfContent.updateMany(

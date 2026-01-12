@@ -60,6 +60,7 @@ const createAdminPanel = () => {
                 imageUrl: 'Image',
                 task: 'Task',
                 projectTask: 'Project Task',
+                stack: 'Stack',
                 tocId: 'Table of Content',
                 homework: 'Homework',
                 createdAt: 'Created At',
@@ -290,6 +291,15 @@ const createAdminPanel = () => {
             chapterNumber: {
               isRequired: true,
             },
+            stack: {
+              type: 'select',
+              availableValues: [
+                { value: 'python', label: 'Python' },
+                { value: 'html', label: 'HTML' },
+              ],
+              isVisible: { list: true, filter: true, show: true, edit: true },
+              isRequired: false,
+            },
             imageUrl: {
               isVisible: { list: true, filter: false, show: true, edit: true },
             },
@@ -354,6 +364,7 @@ const createAdminPanel = () => {
           listProperties: [
             'chapterNumber',
             'chapterTitle',
+            'stack',
             'tocId',
             'imageUrl',
             'createdAt',
@@ -380,7 +391,6 @@ const createAdminPanel = () => {
                 const chapterId = context.record.id();
                 const chapter = await Chapter.findById(chapterId);
 
-                // Store old tocId in the request for use in 'after'
                 if (chapter) {
                   request._oldTocId = chapter.tocId.toString();
                 }
@@ -530,7 +540,6 @@ const createAdminPanel = () => {
                 const homeworkId = context.record.id();
                 const homework = await Homework.findById(homeworkId);
 
-                // Store old chapterId in the request for use in 'after'
                 if (homework) {
                   request._oldChapterId = homework.chapterId.toString();
                 }
