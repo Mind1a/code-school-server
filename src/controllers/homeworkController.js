@@ -4,7 +4,15 @@ const Homework = require('../models/Homeworks');
 const Chapter = require('../models/Chapter');
 
 const createHomework = asyncHandler(async (req, res) => {
-  const { order, question, help, correctAnswer, chapterId } = req.body;
+  const {
+    order,
+    question,
+    help,
+    correctAnswer,
+    chapterId,
+    initialCode,
+    description,
+  } = req.body;
 
   if (!order || !question || !correctAnswer || !chapterId) {
     return res.status(StatusCodes.BAD_REQUEST).json({
@@ -32,6 +40,8 @@ const createHomework = asyncHandler(async (req, res) => {
     help,
     correctAnswer,
     chapterId,
+    initialCode,
+    description,
   });
 
   chapter.homework.push(homework._id);
@@ -77,39 +87,65 @@ const deleteHomeworkById = asyncHandler(async (req, res) => {
 
 const updateHomework = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { order, question, help, correctAnswer, chapterId } = req.body;
+  const {
+    order,
+    question,
+    help,
+    correctAnswer,
+    chapterId,
+    initialCode,
+    description,
+  } = req.body;
 
   if (
     order === undefined &&
     question === undefined &&
     help === undefined &&
     correctAnswer === undefined &&
-    chapterId === undefined
+    chapterId === undefined &&
+    initialCode === undefined
   ) {
     return res.status(StatusCodes.BAD_REQUEST).json({
-      message: 'at least one field must be provided',
+      message: 'At least one field must be provided',
     });
   }
 
-  const update = {};
-  if (order !== undefined) update.order = order;
-  if (question !== undefined) update.question = question;
-  if (help !== undefined) update.help = help;
-  if (correctAnswer !== undefined) update.correctAnswer = correctAnswer;
-  if (chapterId !== undefined) update.chapterId = chapterId;
-
-  const updatedHomework = await Homework.findByIdAndUpdate(
-    id,
-    { $set: update },
-    { new: true, runValidators: true }
-  );
-
-  if (!updatedHomework) {
+  const homework = await Homework.findById(id);
+  if (!homework) {
     return res
       .status(StatusCodes.NOT_FOUND)
       .json({ message: 'Homework not found' });
   }
 
+  if (order !== undefined) homework.order = order;
+  if (question !== undefined) homework.question = question;
+  if (help !== undefined) homework.help = help;
+  if (correctAnswer !== undefined) homework.correctAnswer = correctAnswer;
+  if (initialCode !== undefined) homework.initialCode = initialCode;
+  if (description !== undefined) homework.description = description;
+
+  if (
+    chapterId !== undefined &&
+    chapterId.toString() !== homework.chapterId.toString()
+  ) {
+    await Chapter.updateMany(
+      { homework: homework._id },
+      { $pull: { homework: homework._id } }
+    );
+
+    const chapterExists = await Chapter.findById(chapterId);
+    if (!chapterExists) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: 'Invalid Chapter ID' });
+    }
+    homework.chapterId = chapterId;
+    await Chapter.findByIdAndUpdate(chapterId, {
+      $push: { homework: homework._id },
+    });
+  }
+
+  const updatedHomework = await homework.save();
   res.status(StatusCodes.OK).json(updatedHomework);
 });
 

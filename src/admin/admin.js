@@ -1,9 +1,9 @@
-const AdminJS = require("adminjs");
-const AdminJSMongoose = require("@adminjs/mongoose");
-const Course = require("../models/Course");
-const TableOfContent = require("../models/TableOfContent");
-const Chapter = require("../models/Chapter");
-const Homework = require("../models/Homeworks");
+const AdminJS = require('adminjs');
+const AdminJSMongoose = require('@adminjs/mongoose');
+const Course = require('../models/Course');
+const TableOfContent = require('../models/TableOfContent');
+const Chapter = require('../models/Chapter');
+const Homework = require('../models/Homeworks');
 
 AdminJS.registerAdapter({
   Resource: AdminJSMongoose.Resource,
@@ -12,128 +12,72 @@ AdminJS.registerAdapter({
 
 const createAdminPanel = () => {
   const adminOptions = {
-    rootPath: "/admin",
+    rootPath: '/admin',
     branding: {
-      companyName: "CodeSchool Admin",
+      companyName: 'CodeSchool Admin',
       softwareBrothers: false,
       logo: false,
     },
     locale: {
-      language: "en",
-      availableLanguages: ["en", "ka"],
+      language: 'en',
+      availableLanguages: ['en'],
       translations: {
         en: {
           resources: {
             Course: {
-              name: "Courses",
+              name: 'Courses',
               properties: {
-                name: "Course Name",
-                author: "Author",
-                sectionCount: "Section Count",
-                stack: "Stack",
-                description: "Description",
-                projectPicture: "Course Picture",
-                tableOfContent: "Table of Contents",
-                createdAt: "Created At",
-                updatedAt: "Updated At",
+                name: 'Course Name',
+                author: 'Author',
+                sectionCount: 'Section Count',
+                stack: 'Stack',
+                description: 'Description',
+                projectPicture: 'Course Picture',
+                tableOfContent: 'Table of Contents',
+                createdAt: 'Created At',
+                updatedAt: 'Updated At',
               },
             },
             TableOfContent: {
-              name: "Table of Contents",
+              name: 'Table of Contents',
               properties: {
-                order: "Order",
-                title: "Title",
-                chapter: "Chapters",
-                courseId: "Course",
-                createdAt: "Created At",
-                updatedAt: "Updated At",
+                order: 'Order',
+                title: 'Title',
+                chapter: 'Chapters',
+                courseId: 'Course',
+                createdAt: 'Created At',
+                updatedAt: 'Updated At',
               },
             },
             Chapter: {
-              name: "Chapters",
+              name: 'Chapters',
               properties: {
-                chapterNumber: "Chapter Number",
-                chapterTitle: "Chapter Title",
-                subTitle: "Subtitle",
-                description: "Description",
-                realLifeExample: "Real Life Example",
-                codingExample: "Coding Example",
-                imageUrl: "Image",
-                task: "Task",
-                tocId: "Table of Content",
-                homework: "Homework",
-                createdAt: "Created At",
-                updatedAt: "Updated At",
+                chapterNumber: 'Chapter Number',
+                chapterTitle: 'Chapter Title',
+                description: 'Description',
+                realLifeExample: 'Real Life Example',
+                codingExample: 'Coding Example',
+                imageUrl: 'Image',
+                task: 'Task',
+                projectTask: 'Project Task',
+                tocId: 'Table of Content',
+                homework: 'Homework',
+                createdAt: 'Created At',
+                updatedAt: 'Updated At',
               },
             },
             Homework: {
-              name: "Homework",
+              name: 'Homework',
               properties: {
-                order: "Order",
-                question: "Question",
-                help: "Help",
-                correctAnswer: "Correct Answer",
-                chapterId: "Chapter",
-                createdAt: "Created At",
-                updatedAt: "Updated At",
-              },
-            },
-          },
-        },
-        ka: {
-          resources: {
-            Course: {
-              name: "კურსები",
-              properties: {
-                name: "კურსის სახელი",
-                author: "ავტორი",
-                sectionCount: "სექციების რაოდენობა",
-                stack: "სტეკი",
-                description: "აღწერა",
-                projectPicture: "კურსის სურათი",
-                tableOfContent: "სარჩევი",
-                createdAt: "შექმნის თარიღი",
-                updatedAt: "განახლების თარიღი",
-              },
-            },
-            TableOfContent: {
-              name: "სარჩევი",
-              properties: {
-                order: "რიგითობა",
-                title: "სათაური",
-                chapter: "თავები",
-                courseId: "კურსი",
-                createdAt: "შექმნის თარიღი",
-                updatedAt: "განახლების თარიღი",
-              },
-            },
-            Chapter: {
-              name: "თავები",
-              properties: {
-                chapterNumber: "თავის ნომერი",
-                chapterTitle: "თავის სახელი",
-                subTitle: "ქვესათაური",
-                description: "აღწერა",
-                realLifeExample: "რეალური მაგალითი",
-                codingExample: "კოდის მაგალითი",
-                imageUrl: "სურათი",
-                task: "დავალება",
-                tocId: "სარჩევი",
-                homework: "საშინაო დავალება",
-                createdAt: "შექმნის თარიღი",
-                updatedAt: "განახლების თარიღი",
-              },
-            },
-            Homework: {
-              name: "საშინაო დავალებები",
-              properties: {
-                order: "რიგითობა",
-                question: "კითხვა",
-                help: "დახმარება",
-                correctAnswer: "სწორი პასუხი",
-                chapterId: "თავი",
-                createdAt: "შექმნის თარიღი",
-                updatedAt: "განახლების თარიღი",
+                order: 'Order',
+                question: 'Question',
+                help: 'Help',
+                correctAnswer: 'Correct Answer',
+                description: 'Description',
+                initialCode: 'Initial Code',
+                chapterId: 'Chapter',
+                createdAt: 'Created At',
+                updatedAt: 'Updated At',
               },
             },
           },
@@ -153,7 +97,7 @@ const createAdminPanel = () => {
               isVisible: { list: true, filter: false, show: true, edit: true },
             },
             description: {
-              type: "textarea",
+              type: 'textarea',
               props: {
                 rows: 4,
               },
@@ -174,25 +118,35 @@ const createAdminPanel = () => {
             },
           },
           listProperties: [
-            "name",
-            "author",
-            "stack",
-            "sectionCount",
-            "projectPicture",
-            "createdAt",
+            'name',
+            'author',
+            'stack',
+            'sectionCount',
+            'projectPicture',
+            'createdAt',
           ],
           actions: {
             delete: {
               handler: async (request, response, context) => {
                 const { record, resource } = context;
                 try {
-                  await Course.findByIdAndDelete(record.id());
+                  const courseId = record.id();
+                  const course = await Course.findById(courseId);
+
+                  if (course && course.tableOfContent.length > 0) {
+                    await TableOfContent.deleteMany({
+                      _id: { $in: course.tableOfContent },
+                    });
+                  }
+
+                  await Course.findByIdAndDelete(courseId);
+
                   return {
                     record: record.toJSON(),
                     redirectUrl: resource.href(),
                     notice: {
-                      message: "წარმატებით წაიშალა",
-                      type: "success",
+                      message: 'Successfully deleted',
+                      type: 'success',
                     },
                   };
                 } catch (error) {
@@ -200,7 +154,7 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     notice: {
                       message: error.message,
-                      type: "error",
+                      type: 'error',
                     },
                   };
                 }
@@ -232,7 +186,7 @@ const createAdminPanel = () => {
               isVisible: { list: true, filter: true, show: true, edit: false },
             },
           },
-          listProperties: ["order", "title", "courseId", "createdAt"],
+          listProperties: ['order', 'title', 'courseId', 'createdAt'],
           actions: {
             new: {
               after: async (response, request, context) => {
@@ -251,23 +205,33 @@ const createAdminPanel = () => {
               },
             },
             edit: {
+              before: async (request, context) => {
+                const tocId = context.record.id();
+                const toc = await TableOfContent.findById(tocId);
+
+                if (toc) {
+                  request._oldCourseId = toc.courseId.toString();
+                }
+
+                return request;
+              },
               after: async (response, request, context) => {
                 const tocId = response.record.id;
                 const newCourseId = response.record.params.courseId;
-                const oldCourseId = context.record.params.courseId;
+                const oldCourseId = request._oldCourseId;
 
-                if (newCourseId !== oldCourseId) {
-                  if (oldCourseId) {
-                    await Course.findByIdAndUpdate(oldCourseId, {
-                      $pull: { tableOfContent: tocId },
-                    });
-                  }
+                if (
+                  oldCourseId &&
+                  newCourseId &&
+                  newCourseId.toString() !== oldCourseId
+                ) {
+                  await Course.findByIdAndUpdate(oldCourseId, {
+                    $pull: { tableOfContent: tocId },
+                  });
 
-                  if (newCourseId) {
-                    await Course.findByIdAndUpdate(newCourseId, {
-                      $addToSet: { tableOfContent: tocId },
-                    });
-                  }
+                  await Course.findByIdAndUpdate(newCourseId, {
+                    $addToSet: { tableOfContent: tocId },
+                  });
                 }
 
                 return response;
@@ -279,11 +243,16 @@ const createAdminPanel = () => {
                 try {
                   const tocId = record.id();
                   const courseId = record.params.courseId;
+                  const toc = await TableOfContent.findById(tocId);
 
                   if (courseId) {
                     await Course.findByIdAndUpdate(courseId, {
                       $pull: { tableOfContent: tocId },
                     });
+                  }
+
+                  if (toc && toc.chapter.length > 0) {
+                    await Chapter.deleteMany({ _id: { $in: toc.chapter } });
                   }
 
                   await TableOfContent.findByIdAndDelete(tocId);
@@ -292,8 +261,8 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     redirectUrl: resource.href(),
                     notice: {
-                      message: "წარმატებით წაიშალა",
-                      type: "success",
+                      message: 'Successfully deleted',
+                      type: 'success',
                     },
                   };
                 } catch (error) {
@@ -301,7 +270,7 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     notice: {
                       message: error.message,
-                      type: "error",
+                      type: 'error',
                     },
                   };
                 }
@@ -318,36 +287,54 @@ const createAdminPanel = () => {
             chapterTitle: {
               isTitle: true,
             },
+            chapterNumber: {
+              isRequired: true,
+            },
             imageUrl: {
               isVisible: { list: true, filter: false, show: true, edit: true },
             },
             description: {
-              type: "textarea",
+              type: 'textarea',
               props: {
                 rows: 4,
               },
-              hint: "You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting",
+              hint: 'You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting',
+              isRequired: false,
             },
             realLifeExample: {
-              type: "textarea",
+              type: 'textarea',
               props: {
                 rows: 4,
               },
-              hint: "You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting",
+              hint: 'You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting',
+              isRequired: false,
             },
             codingExample: {
-              type: "textarea",
+              type: 'textarea',
               props: {
                 rows: 6,
               },
-              hint: "You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting",
+              hint: 'You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting',
+              isRequired: false,
             },
             task: {
-              type: "textarea",
+              type: 'textarea',
               props: {
                 rows: 3,
               },
-              hint: "You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting",
+              hint: 'You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting',
+              isRequired: false,
+            },
+            projectTask: {
+              type: 'textarea',
+              props: {
+                rows: 4,
+              },
+              hint: 'You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting. This field is for project-related tasks.',
+              isRequired: false,
+            },
+            tocId: {
+              isRequired: true,
             },
             homework: {
               isVisible: {
@@ -365,11 +352,11 @@ const createAdminPanel = () => {
             },
           },
           listProperties: [
-            "chapterNumber",
-            "chapterTitle",
-            "tocId",
-            "imageUrl",
-            "createdAt",
+            'chapterNumber',
+            'chapterTitle',
+            'tocId',
+            'imageUrl',
+            'createdAt',
           ],
           actions: {
             new: {
@@ -389,23 +376,30 @@ const createAdminPanel = () => {
               },
             },
             edit: {
+              before: async (request, context) => {
+                const chapterId = context.record.id();
+                const chapter = await Chapter.findById(chapterId);
+
+                // Store old tocId in the request for use in 'after'
+                if (chapter) {
+                  request._oldTocId = chapter.tocId.toString();
+                }
+
+                return request;
+              },
               after: async (response, request, context) => {
                 const chapterId = response.record.id;
                 const newTocId = response.record.params.tocId;
-                const oldTocId = context.record.params.tocId;
+                const oldTocId = request._oldTocId;
 
-                if (newTocId !== oldTocId) {
-                  if (oldTocId) {
-                    await TableOfContent.findByIdAndUpdate(oldTocId, {
-                      $pull: { chapter: chapterId },
-                    });
-                  }
+                if (oldTocId && newTocId && newTocId.toString() !== oldTocId) {
+                  await TableOfContent.findByIdAndUpdate(oldTocId, {
+                    $pull: { chapter: chapterId },
+                  });
 
-                  if (newTocId) {
-                    await TableOfContent.findByIdAndUpdate(newTocId, {
-                      $addToSet: { chapter: chapterId },
-                    });
-                  }
+                  await TableOfContent.findByIdAndUpdate(newTocId, {
+                    $addToSet: { chapter: chapterId },
+                  });
                 }
 
                 return response;
@@ -417,10 +411,17 @@ const createAdminPanel = () => {
                 try {
                   const chapterId = record.id();
                   const tocId = record.params.tocId;
+                  const chapter = await Chapter.findById(chapterId);
 
                   if (tocId) {
                     await TableOfContent.findByIdAndUpdate(tocId, {
                       $pull: { chapter: chapterId },
+                    });
+                  }
+
+                  if (chapter && chapter.homework.length > 0) {
+                    await Homework.deleteMany({
+                      _id: { $in: chapter.homework },
                     });
                   }
 
@@ -430,8 +431,8 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     redirectUrl: resource.href(),
                     notice: {
-                      message: "წარმატებით წაიშალა",
-                      type: "success",
+                      message: 'Successfully deleted',
+                      type: 'success',
                     },
                   };
                 } catch (error) {
@@ -439,7 +440,7 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     notice: {
                       message: error.message,
-                      type: "error",
+                      type: 'error',
                     },
                   };
                 }
@@ -455,12 +456,49 @@ const createAdminPanel = () => {
           properties: {
             question: {
               isTitle: true,
-            },
-            help: {
-              type: "textarea",
+              type: 'textarea',
               props: {
                 rows: 3,
               },
+              hint: 'The homework question or task description',
+            },
+            order: {
+              isRequired: true,
+            },
+            help: {
+              type: 'textarea',
+              props: {
+                rows: 3,
+              },
+              hint: 'Helpful hints or guidance for completing the homework',
+              isRequired: false,
+            },
+            correctAnswer: {
+              type: 'textarea',
+              props: {
+                rows: 6,
+              },
+              hint: 'The correct answer or solution code for this homework',
+              isRequired: true,
+            },
+            description: {
+              type: 'textarea',
+              props: {
+                rows: 4,
+              },
+              hint: 'You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting',
+              isRequired: false,
+            },
+            initialCode: {
+              type: 'textarea',
+              props: {
+                rows: 6,
+              },
+              hint: 'Initial code template for the homework',
+              isRequired: false,
+            },
+            chapterId: {
+              isRequired: true,
             },
             createdAt: {
               isVisible: { list: true, filter: true, show: true, edit: false },
@@ -469,7 +507,7 @@ const createAdminPanel = () => {
               isVisible: { list: true, filter: true, show: true, edit: false },
             },
           },
-          listProperties: ["order", "question", "chapterId", "createdAt"],
+          listProperties: ['order', 'question', 'chapterId', 'createdAt'],
           actions: {
             new: {
               after: async (response, request, context) => {
@@ -488,23 +526,34 @@ const createAdminPanel = () => {
               },
             },
             edit: {
+              before: async (request, context) => {
+                const homeworkId = context.record.id();
+                const homework = await Homework.findById(homeworkId);
+
+                // Store old chapterId in the request for use in 'after'
+                if (homework) {
+                  request._oldChapterId = homework.chapterId.toString();
+                }
+
+                return request;
+              },
               after: async (response, request, context) => {
                 const homeworkId = response.record.id;
                 const newChapterId = response.record.params.chapterId;
-                const oldChapterId = context.record.params.chapterId;
+                const oldChapterId = request._oldChapterId;
 
-                if (newChapterId !== oldChapterId) {
-                  if (oldChapterId) {
-                    await Chapter.findByIdAndUpdate(oldChapterId, {
-                      $pull: { homework: homeworkId },
-                    });
-                  }
+                if (
+                  oldChapterId &&
+                  newChapterId &&
+                  newChapterId.toString() !== oldChapterId
+                ) {
+                  await Chapter.findByIdAndUpdate(oldChapterId, {
+                    $pull: { homework: homeworkId },
+                  });
 
-                  if (newChapterId) {
-                    await Chapter.findByIdAndUpdate(newChapterId, {
-                      $addToSet: { homework: homeworkId },
-                    });
-                  }
+                  await Chapter.findByIdAndUpdate(newChapterId, {
+                    $addToSet: { homework: homeworkId },
+                  });
                 }
 
                 return response;
@@ -529,8 +578,8 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     redirectUrl: resource.href(),
                     notice: {
-                      message: "წარმატებით წაიშალა",
-                      type: "success",
+                      message: 'Successfully deleted',
+                      type: 'success',
                     },
                   };
                 } catch (error) {
@@ -538,7 +587,7 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     notice: {
                       message: error.message,
-                      type: "error",
+                      type: 'error',
                     },
                   };
                 }
