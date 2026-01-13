@@ -22,7 +22,10 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:3030"],
+    origin: [
+      process.env.CLIENT_URL || "http://localhost:3000",
+      process.env.SERVER_URL || "http://localhost:3030",
+    ],
     credentials: true,
   })
 );
@@ -71,9 +74,15 @@ const startServer = async () => {
     });
 
     app.listen(PORT, () => {
-      console.log(`Server running on http://localhost:${PORT}`);
       console.log(
-        `AdminJS available at http://localhost:${PORT}${admin.options.rootPath}`
+        `Server running on ${
+          process.env.SERVER_URL || `http://localhost:${PORT}`
+        }`
+      );
+      console.log(
+        `AdminJS available at ${
+          process.env.SERVER_URL || `http://localhost:${PORT}`
+        }${admin.options.rootPath}`
       );
     });
   } catch (error) {
