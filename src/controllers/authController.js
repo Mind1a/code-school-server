@@ -26,6 +26,16 @@ const login = asyncHandler(async (req, res) => {
   });
 });
 
+const logout = asyncHandler(async (req, res) => {
+  res.cookie('jwt', '', {
+    httpOnly: true,
+    expires: new Date(0),
+  });
+
+  res.status(StatusCodes.OK).json({ message: 'Logged out successfully' });
+});
+
 module.exports = {
   login,
+  logout,
 };
