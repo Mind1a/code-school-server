@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const Auth = require('../src/models/Auth');
+const Auth = require('../models/Auth');
+const path = require('path');
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const seedUser = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(process.env.MONGO_URL);
 
     const email = process.env.SEED_USER_EMAIL;
     const password = process.env.SEED_USER_PASSWORD;

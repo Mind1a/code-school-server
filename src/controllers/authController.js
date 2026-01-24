@@ -1,7 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const { StatusCodes } = require('http-status-codes');
-const { generateToken } = require('../lib/utils');
 const Auth = require('../models/Auth');
+const { generateToken } = require('../lib/utils');
 
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -25,3 +25,7 @@ const login = asyncHandler(async (req, res) => {
     email: user.email,
   });
 });
+
+module.exports = {
+  login,
+};
