@@ -11,6 +11,12 @@ const { tocRoutes } = require('./routes/tableOfContentRoutes');
 const { chapterRoutes } = require('./routes/chapterRoutes');
 const { homeworkRoutes } = require('./routes/homeworkRoutes');
 const { authRoutes } = require('./routes/authRoutes');
+const {
+  getLoginPage,
+  handleLogin,
+  handleLogout,
+  requireAdminAuth,
+} = require('./admin/auth');
 
 dotenv.config();
 
@@ -33,7 +39,7 @@ app.use(
 
 app.use(
   session({
-    secret: process.env.ADMIN_SESSION_SECRET,
+    secret: process.env.ADMIN_SESSION_SECRET || 'admin-secret-key-change-this',
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -42,6 +48,7 @@ app.use(
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 24 * 60 * 60 * 1000,
     },
+    name: 'admin-session',
   })
 );
 
@@ -50,11 +57,20 @@ const startServer = async () => {
     await connectedDB();
 
     const AdminJSExpress = await import('@adminjs/express');
-
     const admin = createAdminPanel();
     const adminRouter = AdminJSExpress.default.buildRouter(admin);
 
-    app.use(admin.options.rootPath, adminRouter);
+    app.get('/admin/login', (req, res) => {
+      if (req.session.adminUser) {
+        return res.redirect('/admin');
+      }
+      res.send(getLoginPage());
+    });
+
+    app.post('/admin/login', handleLogin);
+    app.get('/admin/logout', handleLogout);
+
+    app.use('/admin', requireAdminAuth, adminRouter);
 
     app.use('/api', courseRoutes);
     app.use('/api', tocRoutes);
@@ -76,16 +92,8 @@ const startServer = async () => {
     });
 
     app.listen(PORT, () => {
-      console.log(
-        `Server running on ${
-          process.env.SERVER_URL || `http://localhost:${PORT}`
-        }`
-      );
-      console.log(
-        `AdminJS available at ${
-          process.env.SERVER_URL || `http://localhost:${PORT}`
-        }${admin.options.rootPath}`
-      );
+      console.log(`\n✅ Server running on http://localhost:${PORT}`);
+      console.log(`✅ Admin login at http://localhost:${PORT}/admin/login\n`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);
