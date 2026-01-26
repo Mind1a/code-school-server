@@ -5,7 +5,6 @@ const {
   createCourse,
   getCourseById,
   updateCourse,
-  deleteCourse,
 } = require('../controllers/courseController');
 
 const courseRoutes = express.Router();
@@ -18,6 +17,6 @@ courseRoutes.patch(
   upload.single('projectPicture'),
   updateCourse
 );
-courseRoutes.delete('/courses/:courseId', deleteCourse);
+// DELETE endpoint disabled for safety - courses cannot be deleted
 
 module.exports = { courseRoutes };

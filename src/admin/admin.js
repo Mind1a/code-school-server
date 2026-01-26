@@ -128,38 +128,8 @@ const createAdminPanel = () => {
           ],
           actions: {
             delete: {
-              handler: async (request, response, context) => {
-                const { record, resource } = context;
-                try {
-                  const courseId = record.id();
-                  const course = await Course.findById(courseId);
-
-                  if (course && course.tableOfContent.length > 0) {
-                    await TableOfContent.deleteMany({
-                      _id: { $in: course.tableOfContent },
-                    });
-                  }
-
-                  await Course.findByIdAndDelete(courseId);
-
-                  return {
-                    record: record.toJSON(),
-                    redirectUrl: resource.href(),
-                    notice: {
-                      message: 'Successfully deleted',
-                      type: 'success',
-                    },
-                  };
-                } catch (error) {
-                  return {
-                    record: record.toJSON(),
-                    notice: {
-                      message: error.message,
-                      type: 'error',
-                    },
-                  };
-                }
-              },
+              isVisible: false,
+              isAccessible: false,
             },
           },
         },

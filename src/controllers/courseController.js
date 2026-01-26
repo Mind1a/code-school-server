@@ -95,20 +95,9 @@ const getCourseById = asyncHandler(async (req, res) => {
 });
 
 const deleteCourse = asyncHandler(async (req, res) => {
-  const { courseId } = req.params;
-
-  const course = await Course.findById(courseId);
-  if (!course) {
-    res.status(StatusCodes.NOT_FOUND);
-    throw new Error('Course not found');
-  }
-
-  if (course.tableOfContent.length > 0) {
-    await TableOfContent.deleteMany({ _id: { $in: course.tableOfContent } });
-  }
-
-  await course.deleteOne();
-  res.status(StatusCodes.OK).json({ message: 'Course removed' });
+  // Course deletion is disabled for safety reasons
+  res.status(StatusCodes.FORBIDDEN);
+  throw new Error('Course deletion is disabled for safety. Courses cannot be deleted.');
 });
 
 const updateCourse = asyncHandler(async (req, res) => {
