@@ -1,9 +1,10 @@
-const asyncHandler = require('express-async-handler');
-const { StatusCodes } = require('http-status-codes');
-const { uploadToCloudinary } = require('../lib/cloudinaryUpload');
-const Chapter = require('../models/Chapter');
-const TableOfContent = require('../models/TableOfContent');
-const allowedStacks = ['python', 'html'];
+const asyncHandler = require("express-async-handler");
+const { StatusCodes } = require("http-status-codes");
+const { uploadToCloudinary } = require("../lib/cloudinaryUpload");
+const Chapter = require("../models/Chapter");
+const TableOfContent = require("../models/TableOfContent");
+const Course = require("../models/Course");
+const allowedStacks = ["python", "html"];
 
 const createChapter = asyncHandler(async (req, res) => {
   const {
@@ -20,18 +21,18 @@ const createChapter = asyncHandler(async (req, res) => {
 
   if (chapterNumber === undefined || !chapterTitle || !tocId) {
     return res.status(StatusCodes.BAD_REQUEST).json({
-      message: 'chapterNumber, chapterTitle, tocId are required',
+      message: "chapterNumber, chapterTitle, tocId are required",
     });
   }
 
   if (!allowedStacks.includes(stack.toLowerCase())) {
     res.status(StatusCodes.BAD_REQUEST);
-    throw new Error(`Stack must be one of: ${allowedStacks.join(', ')}`);
+    throw new Error(`Stack must be one of: ${allowedStacks.join(", ")}`);
   }
 
   let imageUrl = null;
   if (req.file) {
-    const result = await uploadToCloudinary(req.file.path, 'codeSchool/album');
+    const result = await uploadToCloudinary(req.file.path, "codeSchool/album");
     imageUrl = result.secure_url;
   }
 
@@ -39,7 +40,7 @@ const createChapter = asyncHandler(async (req, res) => {
   if (!toc) {
     return res
       .status(StatusCodes.NOT_FOUND)
-      .json({ message: 'TableOfContent not found' });
+      .json({ message: "TableOfContent not found" });
   }
 
   const chapter = await Chapter.create({
@@ -63,7 +64,7 @@ const createChapter = asyncHandler(async (req, res) => {
 
 const getChapter = asyncHandler(async (_, res) => {
   const chapters = await Chapter.find().populate({
-    path: 'homework',
+    path: "homework",
     options: { sort: { order: 1 } },
   });
 
@@ -74,36 +75,52 @@ const getChapterById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   const chapter = await Chapter.findById(id).populate({
-    path: 'homework',
+    path: "homework",
     options: { sort: { order: 1 } },
   });
 
   if (!chapter) {
     return res
       .status(StatusCodes.NOT_FOUND)
-      .json({ message: 'Chapter not found' });
+      .json({ message: "Chapter not found" });
   }
 
   const toc = await TableOfContent.findById(chapter.tocId).populate({
-    path: 'chapter',
+    path: "chapter",
     options: { sort: { chapterNumber: 1 } },
   });
 
   if (!toc) {
     return res
       .status(StatusCodes.NOT_FOUND)
-      .json({ message: 'TableOfContent not found' });
+      .json({ message: "TableOfContent not found" });
   }
 
-  const chapters = toc.chapter;
-  const currentIndex = chapters.findIndex((ch) => ch._id.toString() === id);
+  // Fetch all table of contents for the course, sorted by order
+  const allTocs = await TableOfContent.find({
+    courseId: toc.courseId,
+  })
+    .sort({ order: 1 })
+    .populate({
+      path: "chapter",
+      options: { sort: { chapterNumber: 1 } },
+    });
+
+  // Flatten all chapters from all sections into a single ordered list
+  const flatChapters = [];
+  allTocs.forEach((tocItem) => {
+    flatChapters.push(...tocItem.chapter);
+  });
+
+  // Find the current chapter's index in the flattened list
+  const currentIndex = flatChapters.findIndex((ch) => ch._id.toString() === id);
 
   res.status(StatusCodes.OK).json({
     chapter,
-    prevChapter: chapters[currentIndex - 1]?._id ?? null,
-    nextChapter: chapters[currentIndex + 1]?._id ?? null,
+    prevChapter: flatChapters[currentIndex - 1]?._id ?? null,
+    nextChapter: flatChapters[currentIndex + 1]?._id ?? null,
     page: currentIndex + 1,
-    totalPages: chapters.length,
+    totalPages: flatChapters.length,
   });
 });
 
@@ -111,16 +128,16 @@ const deleteChapter = asyncHandler(async (req, res) => {
   const chapter = await Chapter.findByIdAndDelete(req.params.id);
   if (!chapter) {
     res.status(StatusCodes.NOT_FOUND);
-    throw new Error('Chapter not found');
+    throw new Error("Chapter not found");
   }
-  res.status(StatusCodes.OK).json({ message: 'Chapter deleted successfully' });
+  res.status(StatusCodes.OK).json({ message: "Chapter deleted successfully" });
 });
 
 const updateChapter = asyncHandler(async (req, res) => {
   const chapter = await Chapter.findById(req.params.id);
   if (!chapter) {
     res.status(StatusCodes.NOT_FOUND);
-    throw new Error('Chapter not found');
+    throw new Error("Chapter not found");
   }
 
   const {
@@ -145,7 +162,7 @@ const updateChapter = asyncHandler(async (req, res) => {
   if (stack !== undefined) {
     if (!allowedStacks.includes(stack.toLowerCase())) {
       res.status(StatusCodes.BAD_REQUEST);
-      throw new Error(`Stack must be one of: ${allowedStacks.join(', ')}`);
+      throw new Error(`Stack must be one of: ${allowedStacks.join(", ")}`);
     }
     chapter.stack = stack.toLowerCase();
   }
@@ -153,13 +170,13 @@ const updateChapter = asyncHandler(async (req, res) => {
   if (tocId !== undefined && tocId.toString() !== chapter.tocId.toString()) {
     await TableOfContent.updateMany(
       { chapter: chapter._id },
-      { $pull: { chapter: chapter._id } }
+      { $pull: { chapter: chapter._id } },
     );
 
     const tocExists = await TableOfContent.findById(tocId);
     if (!tocExists) {
       res.status(StatusCodes.BAD_REQUEST);
-      throw new Error('Invalid TableOfContent ID');
+      throw new Error("Invalid TableOfContent ID");
     }
     chapter.tocId = tocId;
     await TableOfContent.findByIdAndUpdate(tocId, {
@@ -168,7 +185,7 @@ const updateChapter = asyncHandler(async (req, res) => {
   }
 
   if (req.file) {
-    const result = await uploadToCloudinary(req.file.path, 'codeSchool/album');
+    const result = await uploadToCloudinary(req.file.path, "codeSchool/album");
     chapter.imageUrl = result.secure_url;
   }
 
