@@ -16,8 +16,14 @@ const createChapter = asyncHandler(async (req, res) => {
     realLifeExample,
     codingExample,
     projectTask,
+    isFinalProject,
     stack,
   } = req.body;
+
+  const isFinalProjectBool =
+    typeof isFinalProject === "string"
+      ? isFinalProject.toLowerCase() === "true"
+      : Boolean(isFinalProject);
 
   if (chapterNumber === undefined || !chapterTitle || !tocId) {
     return res.status(StatusCodes.BAD_REQUEST).json({
@@ -54,6 +60,7 @@ const createChapter = asyncHandler(async (req, res) => {
     realLifeExample,
     codingExample,
     projectTask,
+    isFinalProject: isFinalProjectBool,
   });
 
   toc.chapter.push(chapter._id);
@@ -149,6 +156,7 @@ const updateChapter = asyncHandler(async (req, res) => {
     realLifeExample,
     codingExample,
     projectTask,
+    isFinalProject,
     stack,
   } = req.body;
 
@@ -159,6 +167,12 @@ const updateChapter = asyncHandler(async (req, res) => {
   if (realLifeExample !== undefined) chapter.realLifeExample = realLifeExample;
   if (codingExample !== undefined) chapter.codingExample = codingExample;
   if (projectTask !== undefined) chapter.projectTask = projectTask;
+  if (isFinalProject !== undefined) {
+    chapter.isFinalProject =
+      typeof isFinalProject === "string"
+        ? isFinalProject.toLowerCase() === "true"
+        : Boolean(isFinalProject);
+  }
   if (stack !== undefined) {
     if (!allowedStacks.includes(stack.toLowerCase())) {
       res.status(StatusCodes.BAD_REQUEST);

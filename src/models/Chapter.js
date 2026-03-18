@@ -1,4 +1,4 @@
-const { default: mongoose } = require('mongoose');
+const { default: mongoose } = require("mongoose");
 
 const ChapterSchema = new mongoose.Schema(
   {
@@ -10,25 +10,26 @@ const ChapterSchema = new mongoose.Schema(
     imageUrl: { type: String },
     task: { type: String, required: false },
     projectTask: { type: String, required: false },
+    isFinalProject: { type: Boolean, default: false },
     stack: {
       type: String,
-      enum: ['python', 'html'],
+      enum: ["python", "html"],
       required: false,
     },
     tocId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'TableOfContent',
+      ref: "TableOfContent",
       required: true,
     },
     homework: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Homework',
+        ref: "Homework",
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-const Chapter = mongoose.model('Chapter', ChapterSchema);
+const Chapter = mongoose.model("Chapter", ChapterSchema);
 module.exports = Chapter;

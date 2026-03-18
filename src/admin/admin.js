@@ -1,9 +1,9 @@
-const AdminJS = require('adminjs');
-const AdminJSMongoose = require('@adminjs/mongoose');
-const Course = require('../models/Course');
-const TableOfContent = require('../models/TableOfContent');
-const Chapter = require('../models/Chapter');
-const Homework = require('../models/Homeworks');
+const AdminJS = require("adminjs");
+const AdminJSMongoose = require("@adminjs/mongoose");
+const Course = require("../models/Course");
+const TableOfContent = require("../models/TableOfContent");
+const Chapter = require("../models/Chapter");
+const Homework = require("../models/Homeworks");
 
 AdminJS.registerAdapter({
   Resource: AdminJSMongoose.Resource,
@@ -12,73 +12,74 @@ AdminJS.registerAdapter({
 
 const createAdminPanel = () => {
   const adminOptions = {
-    rootPath: '/admin',
+    rootPath: "/admin",
     branding: {
-      companyName: 'CodeSchool Admin',
+      companyName: "CodeSchool Admin",
       softwareBrothers: false,
       logo: false,
     },
     locale: {
-      language: 'en',
-      availableLanguages: ['en'],
+      language: "en",
+      availableLanguages: ["en"],
       translations: {
         en: {
           resources: {
             Course: {
-              name: 'Courses',
+              name: "Courses",
               properties: {
-                name: 'Course Name',
-                author: 'Author',
-                sectionCount: 'Section Count',
-                stack: 'Stack',
-                description: 'Description',
-                projectPicture: 'Course Picture',
-                tableOfContent: 'Table of Contents',
-                createdAt: 'Created At',
-                updatedAt: 'Updated At',
+                name: "Course Name",
+                author: "Author",
+                sectionCount: "Section Count",
+                stack: "Stack",
+                description: "Description",
+                projectPicture: "Course Picture",
+                tableOfContent: "Table of Contents",
+                createdAt: "Created At",
+                updatedAt: "Updated At",
               },
             },
             TableOfContent: {
-              name: 'Table of Contents',
+              name: "Table of Contents",
               properties: {
-                order: 'Order',
-                title: 'Title',
-                chapter: 'Chapters',
-                courseId: 'Course',
-                createdAt: 'Created At',
-                updatedAt: 'Updated At',
+                order: "Order",
+                title: "Title",
+                chapter: "Chapters",
+                courseId: "Course",
+                createdAt: "Created At",
+                updatedAt: "Updated At",
               },
             },
             Chapter: {
-              name: 'Chapters',
+              name: "Chapters",
               properties: {
-                chapterNumber: 'Chapter Number',
-                chapterTitle: 'Chapter Title',
-                description: 'Description',
-                realLifeExample: 'Real Life Example',
-                codingExample: 'Coding Example',
-                imageUrl: 'Image',
-                task: 'Task',
-                projectTask: 'Project Task',
-                stack: 'Stack',
-                tocId: 'Table of Content',
-                homework: 'Homework',
-                createdAt: 'Created At',
-                updatedAt: 'Updated At',
+                chapterNumber: "Chapter Number",
+                chapterTitle: "Chapter Title",
+                description: "Description",
+                realLifeExample: "Real Life Example",
+                codingExample: "Coding Example",
+                imageUrl: "Image",
+                task: "Task",
+                projectTask: "Project Task",
+                isFinalProject: "Final Project",
+                stack: "Stack",
+                tocId: "Table of Content",
+                homework: "Homework",
+                createdAt: "Created At",
+                updatedAt: "Updated At",
               },
             },
             Homework: {
-              name: 'Homework',
+              name: "Homework",
               properties: {
-                order: 'Order',
-                question: 'Question',
-                help: 'Help',
-                correctAnswer: 'Correct Answer',
-                description: 'Description',
-                initialCode: 'Initial Code',
-                chapterId: 'Chapter',
-                createdAt: 'Created At',
-                updatedAt: 'Updated At',
+                order: "Order",
+                question: "Question",
+                help: "Help",
+                correctAnswer: "Correct Answer",
+                description: "Description",
+                initialCode: "Initial Code",
+                chapterId: "Chapter",
+                createdAt: "Created At",
+                updatedAt: "Updated At",
               },
             },
           },
@@ -98,7 +99,7 @@ const createAdminPanel = () => {
               isVisible: { list: true, filter: false, show: true, edit: true },
             },
             description: {
-              type: 'textarea',
+              type: "textarea",
               props: {
                 rows: 4,
               },
@@ -119,12 +120,12 @@ const createAdminPanel = () => {
             },
           },
           listProperties: [
-            'name',
-            'author',
-            'stack',
-            'sectionCount',
-            'projectPicture',
-            'createdAt',
+            "name",
+            "author",
+            "stack",
+            "sectionCount",
+            "projectPicture",
+            "createdAt",
           ],
           actions: {
             delete: {
@@ -157,7 +158,7 @@ const createAdminPanel = () => {
               isVisible: { list: true, filter: true, show: true, edit: false },
             },
           },
-          listProperties: ['order', 'title', 'courseId', 'createdAt'],
+          listProperties: ["order", "title", "courseId", "createdAt"],
           actions: {
             new: {
               after: async (response, request, context) => {
@@ -168,7 +169,7 @@ const createAdminPanel = () => {
                   await Course.findByIdAndUpdate(
                     courseId,
                     { $addToSet: { tableOfContent: tocId } },
-                    { new: true }
+                    { new: true },
                   );
                 }
 
@@ -232,8 +233,8 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     redirectUrl: resource.href(),
                     notice: {
-                      message: 'Successfully deleted',
-                      type: 'success',
+                      message: "Successfully deleted",
+                      type: "success",
                     },
                   };
                 } catch (error) {
@@ -241,7 +242,7 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     notice: {
                       message: error.message,
-                      type: 'error',
+                      type: "error",
                     },
                   };
                 }
@@ -262,10 +263,10 @@ const createAdminPanel = () => {
               isRequired: true,
             },
             stack: {
-              type: 'select',
+              type: "select",
               availableValues: [
-                { value: 'python', label: 'Python' },
-                { value: 'html', label: 'HTML' },
+                { value: "python", label: "Python" },
+                { value: "html", label: "HTML" },
               ],
               isVisible: { list: true, filter: true, show: true, edit: true },
               isRequired: false,
@@ -274,43 +275,48 @@ const createAdminPanel = () => {
               isVisible: { list: true, filter: false, show: true, edit: true },
             },
             description: {
-              type: 'textarea',
+              type: "textarea",
               props: {
                 rows: 4,
               },
-              hint: 'You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting',
+              hint: "You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting",
               isRequired: false,
             },
             realLifeExample: {
-              type: 'textarea',
+              type: "textarea",
               props: {
                 rows: 4,
               },
-              hint: 'You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting',
+              hint: "You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting",
               isRequired: false,
             },
             codingExample: {
-              type: 'textarea',
+              type: "textarea",
               props: {
                 rows: 6,
               },
-              hint: 'You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting',
+              hint: "You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting",
               isRequired: false,
             },
             task: {
-              type: 'textarea',
+              type: "textarea",
               props: {
                 rows: 3,
               },
-              hint: 'You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting',
+              hint: "You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting",
               isRequired: false,
             },
             projectTask: {
-              type: 'textarea',
+              type: "textarea",
               props: {
                 rows: 4,
               },
-              hint: 'You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting. This field is for project-related tasks.',
+              hint: "You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting. This field is for project-related tasks.",
+              isRequired: false,
+            },
+            isFinalProject: {
+              type: "boolean",
+              isVisible: { list: true, filter: true, show: true, edit: true },
               isRequired: false,
             },
             tocId: {
@@ -332,12 +338,13 @@ const createAdminPanel = () => {
             },
           },
           listProperties: [
-            'chapterNumber',
-            'chapterTitle',
-            'stack',
-            'tocId',
-            'imageUrl',
-            'createdAt',
+            "chapterNumber",
+            "chapterTitle",
+            "stack",
+            "isFinalProject",
+            "tocId",
+            "imageUrl",
+            "createdAt",
           ],
           actions: {
             new: {
@@ -349,7 +356,7 @@ const createAdminPanel = () => {
                   await TableOfContent.findByIdAndUpdate(
                     tocId,
                     { $addToSet: { chapter: chapterId } },
-                    { new: true }
+                    { new: true },
                   );
                 }
 
@@ -411,8 +418,8 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     redirectUrl: resource.href(),
                     notice: {
-                      message: 'Successfully deleted',
-                      type: 'success',
+                      message: "Successfully deleted",
+                      type: "success",
                     },
                   };
                 } catch (error) {
@@ -420,7 +427,7 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     notice: {
                       message: error.message,
-                      type: 'error',
+                      type: "error",
                     },
                   };
                 }
@@ -436,45 +443,45 @@ const createAdminPanel = () => {
           properties: {
             question: {
               isTitle: true,
-              type: 'textarea',
+              type: "textarea",
               props: {
                 rows: 3,
               },
-              hint: 'The homework question or task description',
+              hint: "The homework question or task description",
             },
             order: {
               isRequired: true,
             },
             help: {
-              type: 'textarea',
+              type: "textarea",
               props: {
                 rows: 3,
               },
-              hint: 'Helpful hints or guidance for completing the homework',
+              hint: "Helpful hints or guidance for completing the homework",
               isRequired: false,
             },
             correctAnswer: {
-              type: 'textarea',
+              type: "textarea",
               props: {
                 rows: 6,
               },
-              hint: 'The correct answer or solution code for this homework',
+              hint: "The correct answer or solution code for this homework",
               isRequired: true,
             },
             description: {
-              type: 'textarea',
+              type: "textarea",
               props: {
                 rows: 4,
               },
-              hint: 'You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting',
+              hint: "You can use <b>bold text</b> or <strong>strong text</strong> tags for bold formatting",
               isRequired: false,
             },
             initialCode: {
-              type: 'textarea',
+              type: "textarea",
               props: {
                 rows: 6,
               },
-              hint: 'Initial code template for the homework',
+              hint: "Initial code template for the homework",
               isRequired: false,
             },
             chapterId: {
@@ -487,7 +494,7 @@ const createAdminPanel = () => {
               isVisible: { list: true, filter: true, show: true, edit: false },
             },
           },
-          listProperties: ['order', 'question', 'chapterId', 'createdAt'],
+          listProperties: ["order", "question", "chapterId", "createdAt"],
           actions: {
             new: {
               after: async (response, request, context) => {
@@ -498,7 +505,7 @@ const createAdminPanel = () => {
                   await Chapter.findByIdAndUpdate(
                     chapterId,
                     { $addToSet: { homework: homeworkId } },
-                    { new: true }
+                    { new: true },
                   );
                 }
 
@@ -557,8 +564,8 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     redirectUrl: resource.href(),
                     notice: {
-                      message: 'Successfully deleted',
-                      type: 'success',
+                      message: "Successfully deleted",
+                      type: "success",
                     },
                   };
                 } catch (error) {
@@ -566,7 +573,7 @@ const createAdminPanel = () => {
                     record: record.toJSON(),
                     notice: {
                       message: error.message,
-                      type: 'error',
+                      type: "error",
                     },
                   };
                 }
